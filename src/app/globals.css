@@ -1907,3 +1907,27 @@ fieldset {
   .display-departments > div { padding: 16px 10px; }
   .queue-legend { flex-wrap: wrap; }
 }
+
+/* Hospital-style patient registration sections. */
+.registration-intro {
+  color: #526d5b;
+  margin-bottom: 26px;
+  font-size: 0.9375rem;
+}
+.registration-intro > span { display: block; margin-top: 6px; font-size: 0.8125rem; }
+.hospital-registration > fieldset { padding-top: 22px; margin-bottom: 28px; border-top: 1px solid var(--line); }
+.hospital-registration > fieldset > legend { padding-right: 12px; color: #14532d; font-size: 1.0625rem; font-weight: 600; }
+.hospital-registration > fieldset > legend > span { color: #63796b; font-family: var(--font-geist-sans), sans-serif; font-size: 0.8125rem; margin-right: 8px; }
+.registration-subheading { font-size: 0.9375rem; margin-bottom: 16px; font-weight: 500; }
+.registration-address { padding: 16px; border-radius: 8px; background: #f3f7f4; }
+.registration-address summary { color: #14532d; cursor: pointer; font-size: 0.9375rem; }
+.registration-address[open] summary { margin-bottom: 20px; }
+.registration-priority > legend { margin-bottom: 12px; font-size: 0.9375rem; }
+.registration-actions { border-top: 1px solid var(--line); padding-top: 22px; }
+.registration-actions p { font-size: 0.875rem; color: #526d5b; margin-bottom: 16px; }
+.registration-reference { padding: 0 23px 22px; }
+.registration-reference h3 { font-size: 0.9375rem; margin: 16px 0 8px; }
+.registration-reference p, .registration-reference a { font-size: 0.875rem; line-height: 1.9; overflow-wrap: anywhere; }
+.registration-reference p { color: #526d5b; }
+.registration-reference a { color: #14532d; text-decoration: underline; text-underline-offset: 3px; }
+.hospital-registration input:disabled, .hospital-registration select:disabled, .hospital-registration textarea:disabled { color: #526d5b; background: #f7faf8; opacity: 1; }
