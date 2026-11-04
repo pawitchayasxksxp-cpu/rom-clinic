@@ -1,6 +1,6 @@
 export const navigation = [
   { href: "/dashboard", label: "ภาพรวม", icon: "dashboard" },
-  { href: "/registration", label: "ลงทะเบียนผู้ป่วย", icon: "registration" },
+  { href: "/registration", label: "รายชื่อผู้ป่วย", icon: "registration" },
   { href: "/queues", label: "จัดการคิว", icon: "queues" },
   { href: "/history", label: "ประวัติประจำวัน", icon: "history" },
   { href: "/display", label: "จอแสดงคิว", icon: "display" },

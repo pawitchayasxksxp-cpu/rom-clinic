@@ -116,7 +116,7 @@ export function AdminShell({
             <br />
             ด้วยการจัดการที่เป็นระบบ
           </p>
-          <Link href="/registration">
+          <Link href="/registration/new">
             ลงทะเบียนผู้ป่วย
             <ArrowUpRight size={16} />
           </Link>

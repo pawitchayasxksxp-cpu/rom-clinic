@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 const paths = [
   "/dashboard",
   "/registration",
+  "/registration/new",
   "/queues",
   "/history",
   "/display",
@@ -89,7 +90,7 @@ test("admin can login, navigate all menus, reload, and logout revokes the sessio
   expect(sessionCookie?.httpOnly).toBe(true);
   expect(sessionCookie?.sameSite).toBe("Lax");
   for (const [path, title] of [
-    ["/registration", "ลงทะเบียนผู้ป่วย"],
+    ["/registration", "รายชื่อผู้ป่วย"],
     ["/queues", "จัดการคิว"],
     ["/history", "ประวัติประจำวัน"],
     ["/display", "จอแสดงคิว"],

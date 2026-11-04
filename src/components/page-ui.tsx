@@ -39,7 +39,7 @@ export function EmptyState({
       <h3>{title}</h3>
       <p>{description}</p>
       {registration && (
-        <Link className="button button-secondary" href="/registration">
+        <Link className="button button-secondary" href="/registration/new">
           <Plus size={16} />
           ลงทะเบียนผู้ป่วย
         </Link>

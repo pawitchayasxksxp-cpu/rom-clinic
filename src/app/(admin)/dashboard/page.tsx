@@ -28,7 +28,7 @@ export default async function DashboardPage() {
         title="ภาพรวมคลินิก"
         description={`ยินดีต้อนรับ ${user.name} ดูแลวันทำงานของคุณให้ราบรื่น`}
       >
-        <Link href="/registration" className="button button-primary">
+        <Link href="/registration/new" className="button button-primary">
           <Plus size={18} />
           ลงทะเบียนผู้ป่วย
         </Link>

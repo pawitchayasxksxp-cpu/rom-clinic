@@ -11,7 +11,9 @@
     "typecheck": "next typegen && tsc --noEmit",
     "db:migrate": "node --conditions=react-server --import tsx scripts/setup-admin.ts --migrate-only",
     "setup:admin": "node --conditions=react-server --import tsx scripts/setup-admin.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:migrate:patients": "node --conditions=react-server --import tsx scripts/migrate-patients.ts",
+    "test:patients": "node --import tsx --test tests/unit/patient-validation.test.ts && node --conditions=react-server --import tsx scripts/test-patients.ts"
   },
   "dependencies": {
     "@next/env": "^16.4.5",

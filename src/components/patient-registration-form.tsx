@@ -1,3 +1,8 @@
+"use client";
+
+import { startTransition, useActionState } from "react";
+import Link from "next/link";
+import { registerPatient } from "@/app/(admin)/registration/actions";
 import { ClipboardPlus } from "lucide-react";
 import { departments } from "@/lib/navigation";
 
@@ -22,7 +27,7 @@ function Field({ id, label, required, type = "text", placeholder, options, autoC
           {options.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
       ) : (
-        <input id={id} name={id} type={type} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
+        <input id={id} name={id} type={type} min={type === "date" ? "1850-01-01" : undefined} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
       )}
     </div>
   );
@@ -42,11 +47,17 @@ function AddressFields({ prefix }: { prefix: string }) {
   );
 }
 
-export function PatientRegistrationForm() {
+export function PatientRegistrationForm({ registrationKey }: { registrationKey: string }) {
+  const [state, action, pending] = useActionState(registerPatient, { error: "" });
   return (
-    <form className="registration-form hospital-registration" aria-describedby="registration-status">
-      <p className="registration-intro">แบบฟอร์มผู้ป่วยใหม่ / ทบทวนข้อมูลผู้ป่วยเดิม <span>* ข้อมูลจำเป็นเมื่อเปิดใช้งาน</span></p>
-      <fieldset disabled>
+    <form onSubmit={(event) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      startTransition(() => action(data));
+    }} className="registration-form hospital-registration" aria-describedby="registration-status" aria-busy={pending}>
+      <input type="hidden" name="registration-key" value={registrationKey} />
+      <p className="registration-intro">แบบฟอร์มทะเบียนผู้ป่วย <span>* ข้อมูลจำเป็น</span></p>
+      <fieldset disabled={pending}>
         <legend><span>01</span> ข้อมูลส่วนตัวผู้ป่วย</legend>
         <div className="field-grid">
           <Field id="patient-type" label="ประเภทผู้ป่วย" required options={["ผู้ป่วยใหม่", "ผู้ป่วยเดิม"]} />
@@ -65,7 +76,7 @@ export function PatientRegistrationForm() {
           <Field id="email" label="อีเมล (ถ้ามี)" type="email" autoComplete="email" />
         </div>
       </fieldset>
-      <fieldset disabled>
+      <fieldset disabled={pending}>
         <legend><span>02</span> ที่อยู่และช่องทางติดต่อ</legend>
         <h3 className="registration-subheading">ที่อยู่ตามทะเบียนบ้าน</h3>
         <AddressFields prefix="registered" />
@@ -74,7 +85,7 @@ export function PatientRegistrationForm() {
           <AddressFields prefix="current" />
         </details>
       </fieldset>
-      <fieldset disabled>
+      <fieldset disabled={pending}>
         <legend><span>03</span> ผู้ติดต่อฉุกเฉิน / ผู้ปกครอง</legend>
         <div className="field-grid">
           <Field id="emergency-name" label="ชื่อ–นามสกุลผู้ติดต่อ" />
@@ -82,7 +93,7 @@ export function PatientRegistrationForm() {
           <Field id="emergency-phone" label="โทรศัพท์ผู้ติดต่อ" type="tel" maxLength={20} />
         </div>
       </fieldset>
-      <fieldset disabled>
+      <fieldset disabled={pending}>
         <legend><span>04</span> สิทธิการรักษา</legend>
         <div className="field-grid">
           <Field id="coverage" label="สิทธิการรักษา / การชำระเงิน" options={["ยังไม่ตรวจสอบสิทธิ", "ชำระเงินเอง", "หลักประกันสุขภาพแห่งชาติ", "ประกันสังคม", "ข้าราชการ / รัฐวิสาหกิจ", "ประกันสุขภาพเอกชน", "อื่น ๆ"]} />
@@ -90,7 +101,7 @@ export function PatientRegistrationForm() {
         </div>
         <p className="form-note">เจ้าหน้าที่ตรวจสอบสิทธิและเอกสารก่อนเข้ารับบริการ</p>
       </fieldset>
-      <fieldset disabled>
+      <fieldset disabled={pending}>
         <legend><span>05</span> ข้อมูลสุขภาพเบื้องต้นและการรับบริการ</legend>
         <div className="field-grid">
           <Field id="blood-group" label="หมู่เลือด" options={["ไม่ทราบ", "A", "B", "AB", "O"]} />
@@ -121,8 +132,12 @@ export function PatientRegistrationForm() {
         </fieldset>
       </fieldset>
       <div className="registration-actions">
-        <p id="registration-status">ตัวอย่างแบบฟอร์ม — ยังไม่เปิดบันทึกข้อมูลผู้ป่วยและออกหมายเลขคิว</p>
-        <button className="button button-primary" type="button" disabled><ClipboardPlus size={18} />ยังไม่เปิดรับลงทะเบียน</button>
+        <p id="registration-status">บันทึกข้อมูลเข้ารายชื่อผู้ป่วย การออกหมายเลขคิวจะเปิดใช้งานในขั้นตอนถัดไป</p>
+        {state.error && <p className="form-error" role="alert">{state.error}</p>}
+        <div className="registration-action-buttons">
+          <button className="button button-primary" type="submit" disabled={pending}><ClipboardPlus size={18} />{pending ? "กำลังบันทึก…" : "บันทึกผู้ป่วย"}</button>
+          <Link href="/registration" className="button button-secondary">ยกเลิก</Link>
+        </div>
       </div>
     </form>
   );

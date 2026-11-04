@@ -28,7 +28,8 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | --- | --- |
 | `/login` | Working admin email/password login |
 | `/dashboard` | Overview shell, department cards, and queue/statistics placeholders |
-| `/registration` | Walk-in registration form scaffold; saving is disabled |
+| `/registration` | Searchable, paginated patient directory backed by PostgreSQL |
+| `/registration/new` | Hospital-style patient registration with validation and persistence |
 | `/queues` | Queue management scaffold; calling/completing/cancelling is pending |
 | `/history` | Daily history scaffold |
 | `/display` | Waiting room display scaffold, currently admin-only |
@@ -36,7 +37,14 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 
 Queue CRUD, numbering, urgent/FIFO sorting, statistics, daily rollover, and live
 display updates are future work. Placeholders use `—` rather than invented data.
-No patient data or business queue tables have been created in this scaffold.
+Patient records are stored in `rom_patient`; queue tables and numbering remain future work.
+
+Run `npm run db:migrate:patients` once before using the directory in each environment.
+This additive migration creates the patient table with RLS and revokes public API
+access. The application checks admin authorization when listing or saving patients.
+Forms validate required fields, dates, phone, department, HN, and postal codes on the
+server. New records receive a unique HN; an existing HN cannot be registered twice.
+Repeated submission of the same form is idempotent. Registration does not issue a queue number.
 
 Authentication uses Better Auth with PostgreSQL-backed sessions, password hashing,
 HTTP-only cookies, and a database rate limiter (5 login attempts/minute per IP).
@@ -150,6 +158,17 @@ npm run lint
 npm run typecheck
 npm run build
 ```
+
+Patient registration checks (Chrome installed, local `npm run dev` running on port 3000):
+
+```sh
+npm run test:patients
+```
+
+This validates inputs and exercises registration, persistence, search, duplicate HN
+rejection, automatic HN generation, and mobile layout with synthetic records. It
+removes only the records created by that run. The configured bootstrap admin
+credentials must match the current database password.
 
 Browser regression tests (Chrome installed locally):
 

@@ -1931,3 +1931,21 @@ fieldset {
 .registration-reference p { color: #526d5b; }
 .registration-reference a { color: #14532d; text-decoration: underline; text-underline-offset: 3px; }
 .hospital-registration input:disabled, .hospital-registration select:disabled, .hospital-registration textarea:disabled { color: #526d5b; background: #f7faf8; opacity: 1; }
+
+.patient-search { padding: 22px 24px; border-bottom: 1px solid var(--line); }
+.patient-search label { display: block; font-size: 0.9375rem; margin-bottom: 8px; }
+.patient-search > div, .registration-action-buttons, .patient-pagination { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.patient-search input { flex: 1; min-width: 180px; padding: 11px 14px; border: 1px solid #cddfd3; border-radius: 8px; background: #fff; color: var(--foreground); }
+.patient-table-scroll { overflow-x: auto; }
+.patient-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9375rem; }
+.patient-table th { color: #14532d; background: #f3f7f4; font-weight: 600; }
+.patient-table th, .patient-table td { padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.patient-table td { overflow-wrap: anywhere; min-width: 120px; }
+.patient-table td:nth-child(2) { min-width: 180px; }
+.patient-pagination { padding: 20px 24px; justify-content: flex-end; }
+.hospital-registration .form-error { color: #9a342c; }
+@media (max-width: 650px) {
+  .patient-search { padding: 18px; }
+  .patient-search input { flex-basis: 100%; }
+  .patient-table th, .patient-table td { padding: 14px 16px; }
+}
