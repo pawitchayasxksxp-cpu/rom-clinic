@@ -39,13 +39,15 @@ async function main() {
     await page.locator("#booking-hn").fill(hn);
     await page.getByRole("button", { name: "บันทึกการจอง", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/calendar\\?date=${date}&saved=1$`));
-    const agenda = page.getByRole("region", { name: "รายการจองวันที่เลือก" });
+    const agenda = page.locator(`.calendar-day[data-date="${date}"]`);
+    await agenda.locator(".calendar-event summary").filter({ hasText: "ทดสอบปฏิทิน" }).click();
     await expect(agenda).toContainText(hn);
     await expect(agenda).toContainText("09:30");
     await expect(agenda).toContainText("ยืนยันนัด");
     await page.reload();
+    await agenda.locator(".calendar-event summary").filter({ hasText: "ทดสอบปฏิทิน" }).click();
     await expect(agenda).toContainText(hn);
-    await expect(page.locator(`.calendar-day[href*="date=${date}"]`)).toContainText("ทดสอบปฏิทิน");
+    await expect(page.locator(`.calendar-day[data-date="${date}"]`)).toContainText("ทดสอบปฏิทิน");
     await page.locator("#calendar-department").selectOption("DT");
     await page.getByRole("button", { name: "แสดง", exact: true }).click();
     await expect(agenda).not.toContainText(hn);
@@ -54,7 +56,7 @@ async function main() {
     await expect(agenda).toContainText(hn);
     await page.getByRole("link", { name: "เดือนถัดไป", exact: true }).click();
     await page.getByRole("link", { name: "เดือนก่อนหน้า", exact: true }).click();
-    await page.locator(`.calendar-day[href*="date=${date}"]`).click();
+    await page.locator(`.calendar-day[data-date="${date}"] .calendar-day-number`).click();
     await expect(agenda).toContainText(hn);
     await page.locator("#booking-hn").fill(hn);
     await page.locator("#booking-date").fill(date);

@@ -30,7 +30,7 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | `/dashboard` | Overview shell, department cards, and queue/statistics placeholders |
 | `/registration` | Searchable, paginated patient directory backed by PostgreSQL |
 | `/registration/new` | Hospital-style patient registration with validation and persistence |
-| `/calendar` | Monthly booking calendar, daily agenda, department filter, and booking form |
+| `/calendar` | Full-width month calendar with booking cards in each day, expandable details, department filter, and booking form |
 | `/queues` | Queue management scaffold; calling/completing/cancelling is pending |
 | `/history` | Daily history scaffold |
 | `/display` | Waiting room display scaffold, currently admin-only |
