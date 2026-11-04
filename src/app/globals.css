@@ -2250,7 +2250,7 @@ select:not([multiple]) { max-width: 100%; min-width: 0; }
 
 .patient-table .patient-action-cell { min-width: 182px; width: 182px; }
 .body-chart-instructions { color: #526d5b; font-size: 0.9375rem; margin: 0 0 18px; }
-.body-chart-canvas { border: 1px solid #cddfd3; border-radius: 10px; overflow: hidden; background: #fff; }
+.body-chart-canvas { border: 1px solid #cddfd3; border-left: 0; border-radius: 10px; overflow: hidden; background: #fff; }
 .body-chart-image { width: 100%; height: auto; display: block; }
 .body-chart-image.interactive { cursor: crosshair; touch-action: manipulation; }
 .body-chart-marker { pointer-events: none; }
