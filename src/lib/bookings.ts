@@ -24,7 +24,7 @@ export async function listBookings(start: string, end: string, department: strin
       COALESCE(p.hn, 'ROM-' || lpad(p.id::text, 8, '0')) AS hn,
       p.phone, b.department, b.status, b.note
      FROM rom_booking b JOIN rom_patient p ON p.id = b.patient_id
-     WHERE b.starts_at >= ($1::date::timestamp AT TIME ZONE 'Asia/Bangkok')
+     WHERE p.deleted_at IS NULL AND b.starts_at >= ($1::date::timestamp AT TIME ZONE 'Asia/Bangkok')
        AND b.starts_at < ($2::date::timestamp AT TIME ZONE 'Asia/Bangkok')
        AND ($3 = '' OR b.department = $3)
      ORDER BY b.starts_at, b.id`,

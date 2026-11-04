@@ -29,8 +29,8 @@ export async function listPatients(search: string, page: number) {
       p.details->>'bp-systolic' AS bp_systolic, p.details->>'bp-diastolic' AS bp_diastolic, p.details->>'pulse' AS pulse,
       to_char(p.created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
      FROM rom_patient p LEFT JOIN rom_course c ON c.id = p.course_id
-     WHERE $1 = '' OR concat_ws(' ', p.hn, p.first_name, p.last_name, p.phone,
-       'ROM-' || lpad(p.id::text, 8, '0')) ILIKE $2
+     WHERE p.deleted_at IS NULL AND ($1 = '' OR concat_ws(' ', p.hn, p.first_name, p.last_name, p.phone,
+       'ROM-' || lpad(p.id::text, 8, '0')) ILIKE $2)
      ORDER BY p.created_at DESC, p.id DESC LIMIT 21 OFFSET $3`,
     [search, pattern, (page - 1) * 20],
   );
@@ -58,7 +58,7 @@ export async function getPatient(id: string): Promise<PatientDetail | null> {
       first_name, last_name, to_char(birth_date, 'YYYY-MM-DD') AS birth_date,
       phone, department, details, course_id::text,
       to_char(created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
-     FROM rom_patient WHERE id = $1`,
+     FROM rom_patient WHERE id = $1 AND deleted_at IS NULL`,
     [id],
   );
   return result.rows[0] || null;
@@ -73,8 +73,8 @@ export async function searchPatientChoices(search: string) {
     `SELECT id::text, COALESCE(hn, 'ROM-' || lpad(id::text, 8, '0')) AS hn,
       first_name, last_name
      FROM rom_patient
-     WHERE $1 = '' OR concat_ws(' ', hn, first_name, last_name, phone,
-       'ROM-' || lpad(id::text, 8, '0')) ILIKE $2
+     WHERE deleted_at IS NULL AND ($1 = '' OR concat_ws(' ', hn, first_name, last_name, phone,
+       'ROM-' || lpad(id::text, 8, '0')) ILIKE $2)
      ORDER BY created_at DESC, id DESC LIMIT 21`,
     [search, pattern],
   );

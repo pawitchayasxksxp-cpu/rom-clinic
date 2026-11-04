@@ -325,3 +325,10 @@ Body Chart records have an edit button that updates the existing chart.
 Additional checks: `node --conditions=react-server --import tsx scripts/test-dispensing-stock.ts`
 and `node --conditions=react-server --import tsx scripts/test-body-chart-edit.ts`
 (the latter requires the local server on port 3000).
+
+Apply `npm run db:migrate:patient-delete` before deploying patient deletion.
+Deletion removes patients from active lists, pickers and appointments while retaining
+clinical records and stock movements. The original HN remains reserved.
+Repeat visits have fresh vital-sign fields in the treatment form and retain each
+measurement in dated treatment history. Registration measurements remain separate.
+Check both flows with `node --conditions=react-server --import tsx scripts/test-patient-delete-vitals.ts`.

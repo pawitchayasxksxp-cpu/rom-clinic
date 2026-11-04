@@ -38,7 +38,7 @@ export async function assignPatientCourse(patientId: string, courseId: string): 
   try {
     const result = await getDatabase().query(
       `UPDATE rom_patient SET course_id = $2::uuid, details = jsonb_set(details, '{service-type}', to_jsonb($3::text), true)
-       WHERE id = $1 AND ($2::uuid IS NULL OR EXISTS (SELECT 1 FROM rom_course WHERE id = $2::uuid AND archived_at IS NULL)) RETURNING id`,
+       WHERE id = $1 AND deleted_at IS NULL AND ($2::uuid IS NULL OR EXISTS (SELECT 1 FROM rom_course WHERE id = $2::uuid AND archived_at IS NULL)) RETURNING id`,
       [patientId, courseId || null, courseId ? "course" : "walk-in"],
     );
     if (!result.rowCount) return { error: "ไม่พบผู้ป่วย หรือคอร์สนี้ถูกลบแล้ว" };

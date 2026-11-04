@@ -2338,3 +2338,18 @@ select:not([multiple]) { max-width: 100%; min-width: 0; }
   .patient-course-select, .patient-service-select { min-width: 0; max-width: none; }
   .patient-table td:nth-child(2), .dashboard-waiting-table td:first-child, .dashboard-waiting-table td:nth-child(2) { min-width: 0; }
 }
+
+.patient-table .patient-price-cell { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+
+.patient-detail-back { margin-bottom: 20px; }
+.patient-delete-button { color: #a12d28; }
+.patient-delete-button:hover { background: #fff0ef; color: #82211d; }
+.patient-delete-control { display: inline-flex; flex-direction: column; }
+
+.visit-vitals-entry { padding: 20px; margin: 20px 0; background: #f1f8f3; border-radius: 10px; scroll-margin-top: 24px; }
+.visit-vitals-entry h2 { margin: 0 0 8px; font-size: 1.15rem; color: #14532d; }
+
+.master-image-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.master-image-preview { margin: 8px 0 12px; max-width: 100%; }
+.master-image-preview img { display: block; width: 200px; height: 160px; max-width: 100%; object-fit: contain; background: #f1f8f3; border: 1px solid var(--line); margin: 0; }
+.master-image-filename { font-size: 0.875rem; overflow-wrap: anywhere; color: #526d5b; }

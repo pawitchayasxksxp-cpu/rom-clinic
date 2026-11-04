@@ -20,9 +20,11 @@ export function ClinicalForm({ mode, patientId, recordKey, date, time, provider,
       {treatment ? <>
         <div className="field-grid">{field("visit-date", "วันที่รับบริการ (ค.ศ.)", { required: true, type: "date", value: date, max: date })}{field("visit-time", "เวลารับบริการ (เวลาไทย)", { required: true, type: "time", value: time })}</div>
         <div className="field"><label htmlFor="department">แผนก <span>*</span></label><select id="department" name="department" required defaultValue=""><option value="" disabled>เลือกแผนก</option>{departments.map(item => <option key={item.code} value={item.code}>{item.name}</option>)}</select></div>
+        <section id="visit-vitals" className="visit-vitals-entry" aria-label="สัญญาณชีพในการรักษาครั้งนี้"><h2>ความดันและชีพจรครั้งนี้</h2><p className="form-note">กรอกค่าที่วัดใหม่ในการมารักษาครั้งนี้ ระบบเก็บแยกตามวันที่และเวลารับบริการในประวัติการรักษา</p>
+        <div className="field-grid">{field("bp-systolic", "ความดันตัวบน (mmHg)", { type: "number", min: "1", max: "999" })}{field("bp-diastolic", "ความดันตัวล่าง (mmHg)", { type: "number", min: "1", max: "999" })}{field("pulse", "ชีพจร (ครั้ง/นาที)", { type: "number", min: "1", max: "999" })}</div>
+        </section>
         {text("symptoms", "อาการสำคัญ / เหตุผลที่มารับบริการ", true)}
         {text("examination", "ผลการตรวจ")}{text("assessment", "การประเมิน / การวินิจฉัย")}{text("treatment", "การรักษา / หัตถการ / คำแนะนำ", true)}
-        <div className="field-grid">{field("bp-systolic", "ความดันตัวบน (mmHg)", { type: "number", min: "1", max: "999" })}{field("bp-diastolic", "ความดันตัวล่าง (mmHg)", { type: "number", min: "1", max: "999" })}{field("pulse", "ชีพจร (ครั้ง/นาที)", { type: "number", min: "1", max: "999" })}</div>
         <div className="field-grid">{field("provider", "ผู้ให้บริการ", { required: true, value: provider })}{field("follow-up", "วันติดตามอาการ (ถ้ามี)", { type: "date" })}</div>
       </> : <>
         <div className="field-grid">{field("issue-date", "วันที่ออกเอกสาร (ค.ศ.)", { required: true, type: "date", value: date, max: date })}{field("exam-date", "วันที่ตรวจ (ค.ศ.)", { required: true, type: "date", value: date, max: date })}</div>

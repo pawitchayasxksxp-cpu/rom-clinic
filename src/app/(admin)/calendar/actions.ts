@@ -15,7 +15,7 @@ export async function createBooking(_state: { error: string }, form: FormData): 
     const saved = await getDatabase().query(
       `INSERT INTO rom_booking (id, patient_id, starts_at, department, note)
        SELECT $1::uuid, id, $3::timestamptz, $4, $5 FROM rom_patient
-       WHERE COALESCE(hn, 'ROM-' || lpad(id::text, 8, '0')) = $2
+       WHERE deleted_at IS NULL AND COALESCE(hn, 'ROM-' || lpad(id::text, 8, '0')) = $2
        ON CONFLICT (id) DO UPDATE SET id = rom_booking.id
        RETURNING id`,
       [data["booking-key"], data.hn, `${data.date}T${data.time}:00+07:00`, data.department, data.note],

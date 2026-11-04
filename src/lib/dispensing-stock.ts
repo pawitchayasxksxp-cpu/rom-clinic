@@ -27,7 +27,7 @@ export async function recordDispensing(form: FormData, actorId: string) {
     if (!stock.rowCount) throw new Error(`สต๊อกยาไม่เพียงพอ คงเหลือ ${medicine.stock} ${medicine.unit === "อื่น ๆ" ? medicine.unit_other : medicine.unit}`);
     const saved = await client.query(`INSERT INTO rom_dispensing (id,patient_id,patient_name,hn,drug_name,details,created_by,medicine_id)
       SELECT $1::uuid,id,concat_ws(' ',first_name,last_name),COALESCE(hn,'ROM-'||lpad(id::text,8,'0')),$3,$4::jsonb,$5,$6::uuid
-      FROM rom_patient WHERE COALESCE(hn,'ROM-'||lpad(id::text,8,'0'))=$2 RETURNING patient_id::text`, [key,result.hn,medicine.name,JSON.stringify(result.data),actorId,medicineId]);
+      FROM rom_patient WHERE deleted_at IS NULL AND COALESCE(hn,'ROM-'||lpad(id::text,8,'0'))=$2 RETURNING patient_id::text`, [key,result.hn,medicine.name,JSON.stringify(result.data),actorId,medicineId]);
     if (!saved.rowCount) throw new Error("ไม่พบผู้ป่วย กรุณาเลือกจากรายชื่ออีกครั้ง");
     await client.query("COMMIT");
     return {key,patientId:saved.rows[0].patient_id as string};

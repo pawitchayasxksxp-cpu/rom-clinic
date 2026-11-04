@@ -1,3 +1,4 @@
+import { DeletePatientButton } from "@/components/delete-patient-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound } from "lucide-react";
@@ -49,15 +50,16 @@ export default async function PatientDetailPage({ params, searchParams }: {
   ];
   const bp = value("bp-systolic") && value("bp-diastolic") ? `${value("bp-systolic")}/${value("bp-diastolic")}` : "—";
   return <>
+    <div className="patient-detail-back"><Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link></div>
     <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`HN ${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
-      <div className="registration-action-buttons"><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link></div>
+      <div className="registration-action-buttons"><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><DeletePatientButton id={id} hn={patient.hn} name={`${patient.first_name} ${patient.last_name}`} /></div>
     </PageHeading>
     {query.saved === "1" && <p role="status" className="form-feedback">บันทึกการแก้ไขข้อมูลผู้ป่วยเรียบร้อยแล้ว</p>}
     <section className="panel patient-profile" aria-label="ข้อมูลสรุปผู้ป่วย">
       <div className="patient-profile-name"><span className="empty-icon"><UserRound size={28} /></span><div><h2>{value("title")} {patient.first_name} {patient.last_name}</h2><p>{patient.hn} · แผนก{department}</p></div></div>
-      <dl className="patient-vitals">
-        <div><dt><HeartPulse size={17} />ความดัน</dt><dd>{bp} <small>mmHg</small></dd></div>
-        <div><dt>ชีพจร</dt><dd>{value("pulse") || "—"} <small>ครั้ง/นาที</small></dd></div>
+      <dl className="patient-vitals" aria-label="สัญญาณชีพเมื่อลงทะเบียน">
+        <div><dt><HeartPulse size={17} />ความดันเมื่อลงทะเบียน</dt><dd>{bp} <small>mmHg</small></dd></div>
+        <div><dt>ชีพจรเมื่อลงทะเบียน</dt><dd>{value("pulse") || "—"} <small>ครั้ง/นาที</small></dd></div>
         <div><dt>หมู่เลือด</dt><dd>{value("blood-group") || "—"}</dd></div>
       </dl>
     </section>
