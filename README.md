@@ -370,7 +370,7 @@ format. Internal `hn` column/sequence names remain compatible with existing code
 
 Apply `npm run db:migrate:examination` to enable sending registered patients to
 an examination room. One active room per patient prevents duplicate sends.
-The room form records chief complaint, illness history, physical examination,
+The room form records chief complaint, current illness, physical examination,
 treatment/procedure and fresh vital signs. Saving completes the room and writes
 the treatment (including optional prepaid-course usage) in one transaction.
 
@@ -380,9 +380,10 @@ unchanged. Certificate previews include the selected identity-document type and
 number; saved certificates snapshot these values. Explicit PDF/print actions use
 the browser print dialog (choose Save as PDF).
 
-Patient-detail PDF/print opens `/registration/[id]/print`: all saved patient
-fields and all clinical/medication/certificate/course/payment/booking/room records
-are arranged on one A4 page without Body Chart. Content reflows and scales to fit;
+Patient-detail PDF/print opens `/registration/[id]/print`: essential patient identifiers, contact details, allergy/medical history, latest
+visit measurements, examination, diagnosis, treatment and same-day medicines
+are arranged as an OPD summary on one A4 page. Financial, course, queue history,
+certificates and Body Chart are excluded. Content reflows and scales to fit;
 large histories therefore use smaller text. Excel remains available separately.
 Desktop sidebar collapse is stored locally and keeps navigation icons available;
 the mobile menu retains its full-width overlay.
@@ -391,3 +392,21 @@ Additional validation: `scripts/test-patient-cn.ts` checks CN migration in isola
 rolled-back schemas; `scripts/test-examination-documents.ts` exercises the real
 room/certificate/report flow and renders the resulting one-page PDFs. Run these
 with `node --conditions=react-server --import tsx` and the local server on port 3000.
+
+Room OPD: use **บันทึกและพิมพ์ OPD** to save and complete the encounter before
+printing `/queues/[id]/print`. Completed rooms print their specific treatment,
+independent of later visits. The room's date field is the actual service date.
+The patient profile shows the latest recorded weight/height/BMI below blood pressure
+with the measurement timestamp; registration measurements remain distinguishable.
+
+The patient history panel collapses independently, contains 10 events per page,
+and preserves its expanded state when paging. Each event can also expand for
+its full details. The profile includes a direct payment link with that patient
+selected, and displays the identifier without a duplicated CN prefix.
+
+The OPD summary's essential clinical headings follow the outpatient-record
+categories described by the [Nakhon Si Thammarat provincial health office](https://clinic.nrt.go.th/main/public/article-detail.php?id=3).
+It displays the latest visit (or the specific completed room encounter), rather
+than historical financial/course/certificate data. Measurements are timestamped;
+missing values are identified as unrecorded. Medication rows explicitly refer
+to the visit date, rather than claiming an unrecorded prescription association.

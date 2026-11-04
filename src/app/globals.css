@@ -2472,3 +2472,44 @@ select:not([multiple]) { max-width: 100%; min-width: 0; }
  .sidebar-collapsed .nav-item > span:not(.nav-active-dot) { display: none; }
  .sidebar-collapsed .nav-active-dot { position: absolute; right: 4px; }
 }
+
+.patient-measurement-summary { width: 100%; border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.patient-measurement-summary > p { color: #526d5b; font-size: 0.875rem; margin-bottom: 10px; }
+.patient-measurement-summary .patient-vitals { justify-content: flex-start; border-top: 0; padding-top: 0; margin-top: 0; }
+.clinical-summary-print-page .patient-summary-content { font-size: 12px; line-height: 1.5; padding: 16px; }
+.opd-document .summary-header h1 { font-size: 21px; }
+.opd-reference { margin-left: auto; text-align: right; font-size: 11px; }
+.opd-reference strong { font-size: 15px; color: #14532d; }
+.opd-section { margin-top: 13px; }
+.opd-section h2 { font-size: 13px; color: #14532d; background: #eaf3ed; border-bottom: 1px solid #c5d8cb; padding: 5px 8px; margin-bottom: 8px; }
+.opd-section h2 small { font-size: 10px; font-weight: normal; }
+.opd-patient-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px 14px; }
+.opd-patient-grid dt, .opd-vital-grid dt { font-size: 10px; color: #526d5b; }
+.opd-patient-grid dd, .opd-clinical-fields dd, .opd-vital-grid dd { white-space: pre-wrap; overflow-wrap: anywhere; }
+.opd-wide { grid-column: 1 / -1; }
+.opd-allergy { border: 1px solid #cfb4a1; border-radius: 5px; padding: 0 8px 6px; }
+.opd-allergy h2 { background: #fcf1e9; border-color: #e4cbbb; color: #7d3e22; margin: 0 -8px 8px; }
+.opd-clinical-fields { display: grid; gap: 7px; }
+.opd-clinical-fields > div { display: grid; grid-template-columns: 160px minmax(0,1fr); gap: 8px; }
+.opd-clinical-fields dt { font-weight: 600; color: #3b5545; }
+.opd-vital-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 8px; }
+.opd-vital-grid dd { font-size: 13px; font-weight: 600; }
+.opd-medications { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.opd-medications th, .opd-medications td { text-align: left; border-bottom: 1px solid #e2ebe5; padding: 5px; vertical-align: top; white-space: pre-wrap; overflow-wrap: anywhere; }
+.opd-medications th:nth-child(2) { width: 90px; }
+.opd-medications small { display: block; color: #63796b; font-size: 9px; }
+.opd-empty { color: #63796b; }
+.opd-signature { margin-top: 22px; border-top: 1px solid #c5d8cb; padding-top: 12px; }
+.opd-signature p + p { margin-top: 12px; }
+.opd-signature small { display: block; color: #63796b; margin-top: 14px; font-size: 9px; }
+
+.clinical-event-details > summary { cursor: pointer; list-style: none; }
+.clinical-event-details > summary::-webkit-details-marker { display: none; }
+.clinical-event-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; color: #14532d; font-size: 0.8125rem; white-space: nowrap; }
+.clinical-event-details[open] .clinical-event-toggle svg { transform: rotate(180deg); }
+.clinical-event-body { padding-top: 14px; }
+
+.history-section-summary { cursor: pointer; list-style: none; margin: 0; }
+.history-section-summary::-webkit-details-marker { display: none; }
+.patient-history-section[open] > .history-section-summary > svg { transform: rotate(180deg); }
+.history-section-actions { padding: 16px 24px 0; }

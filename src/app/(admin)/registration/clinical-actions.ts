@@ -16,7 +16,7 @@ export async function saveTreatment(_state: { error: string }, form: FormData): 
   if (!await getPatient(result.patientId)) return { error: "ไม่พบผู้ป่วย" };
   const queueId = form.get("examination-id");
   if (queueId !== null && (typeof queueId !== "string" || !uuidPattern.test(queueId) || queueId !== result.key)) return {error:"คิวห้องตรวจไม่ถูกต้อง"};
-  if (queueId && (!result.data["illness-history"] || !result.data.examination)) return {error:"กรุณากรอกประวัติการเจ็บป่วยและการตรวจทางร่างกาย"};
+  if (queueId && (!result.data["illness-history"] || !result.data.examination)) return {error:"กรุณากรอกอาการเจ็บป่วยปัจจุบันและการตรวจทางร่างกาย"};
   const entitlement = form.get("patient-course-id");
   if (entitlement !== null && typeof entitlement !== "string") return { error: "ข้อมูลคอร์สไม่ถูกต้อง" };
   const client = await getDatabase().connect();
@@ -41,6 +41,7 @@ export async function saveTreatment(_state: { error: string }, form: FormData): 
   if (queueId) revalidatePath(`/queues/${queueId}`);
   revalidatePath("/registration");
   revalidatePath(`/registration/${result.patientId}`);
+  if (queueId && form.get("print-after-save") === "1") redirect(`/queues/${queueId}/print?print=1`);
   redirect(`/registration/${result.patientId}?treatment-saved=1#treatment-history`);
 }
 

@@ -92,3 +92,11 @@ export async function patientHnPreview() {
   );
   return result.rows[0];
 }
+
+export async function latestPatientMeasurements(id: string) {
+  await requireAdmin();
+  if (!/^[1-9]\d{0,18}$/.test(id) || BigInt(id) > BigInt("9223372036854775807")) return null;
+  const result = await getDatabase().query<{date: string; weight: string | null; height: string | null; bmi: string | null}>(
+    "SELECT to_char(t.visit_at AT TIME ZONE 'Asia/Bangkok','DD/MM/YYYY HH24:MI') AS date,t.details->>'weight' AS weight,t.details->>'height' AS height,t.details->>'bmi' AS bmi FROM rom_treatment t WHERE t.patient_id=$1 AND (COALESCE(t.details->>'weight','')<>'' OR COALESCE(t.details->>'height','')<>'') AND EXISTS(SELECT 1 FROM rom_patient p WHERE p.id=t.patient_id AND p.deleted_at IS NULL) ORDER BY t.visit_at DESC,t.created_at DESC,t.id DESC LIMIT 1", [id]);
+  return result.rows[0] || null;
+}

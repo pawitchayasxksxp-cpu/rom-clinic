@@ -3,9 +3,9 @@ import { PatientCourses } from "@/components/patient-courses";
 import { SendToExaminationButton } from "@/components/send-to-examination-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound, FileDown } from "lucide-react";
+import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound, FileDown, ReceiptText } from "lucide-react";
 import { requireAdmin } from "@/lib/session";
-import { getPatient } from "@/lib/patients";
+import { getPatient, latestPatientMeasurements } from "@/lib/patients";
 import { getCourse } from "@/lib/courses";
 import { patientFieldDisplay } from "@/lib/patient-field-display";
 import { patientServiceLabel } from "@/lib/patient-service";
@@ -33,6 +33,7 @@ export default async function PatientDetailPage({ params, searchParams }: {
   const { id } = await params;
   const patient = await getPatient(id);
   if (!patient) notFound();
+  const measurements = await latestPatientMeasurements(id);
   const course = patient.course_id ? await getCourse(patient.course_id) : null;
   const query = await searchParams;
   const backParams = new URLSearchParams();
@@ -53,8 +54,8 @@ export default async function PatientDetailPage({ params, searchParams }: {
   const bp = value("bp-systolic") && value("bp-diastolic") ? `${value("bp-systolic")}/${value("bp-diastolic")}` : "—";
   return <>
     <div className="patient-detail-back"><Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link></div>
-    <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`CN ${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
-      <div className="registration-action-buttons"><Link href={`/registration/${id}/print?print=1`} className="button button-secondary"><FileDown size={18} />PDF ข้อมูลผู้ป่วยทั้งหมด</Link><SendToExaminationButton patientId={id} cn={patient.hn} /><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><DeletePatientButton id={id} hn={patient.hn} name={`${patient.first_name} ${patient.last_name}`} /></div>
+    <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
+      <div className="registration-action-buttons"><Link href={`/billing?patient=${id}`} className="button button-primary"><ReceiptText size={18} />ไปหน้าชำระเงิน</Link><Link href={`/registration/${id}/print?print=1`} className="button button-secondary"><FileDown size={18} />พิมพ์ใบสรุป OPD</Link><SendToExaminationButton patientId={id} cn={patient.hn} /><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><DeletePatientButton id={id} hn={patient.hn} name={`${patient.first_name} ${patient.last_name}`} /></div>
     </PageHeading>
     {query.saved === "1" && <p role="status" className="form-feedback">บันทึกการแก้ไขข้อมูลผู้ป่วยเรียบร้อยแล้ว</p>}
     <section className="panel patient-profile" aria-label="ข้อมูลสรุปผู้ป่วย">
@@ -64,10 +65,11 @@ export default async function PatientDetailPage({ params, searchParams }: {
         <div><dt>ชีพจรเมื่อลงทะเบียน</dt><dd>{value("pulse") || "—"} <small>ครั้ง/นาที</small></dd></div>
         <div><dt>หมู่เลือด</dt><dd>{value("blood-group") || "—"}</dd></div>
       </dl>
+      <div className="patient-measurement-summary" aria-label="การวัดร่างกายล่าสุด"><p>{measurements ? `การวัดร่างกายล่าสุด · ${measurements.date}` : `การวัดร่างกายเมื่อลงทะเบียน · ${patient.registered_date}`}</p><dl className="patient-vitals"><div><dt>น้ำหนัก</dt><dd>{(measurements ? measurements.weight : value("weight")) || "—"} <small>กก.</small></dd></div><div><dt>ส่วนสูง</dt><dd>{(measurements ? measurements.height : value("height")) || "—"} <small>ซม.</small></dd></div><div><dt>BMI</dt><dd>{(measurements ? measurements.bmi : value("bmi")) || "—"} <small>กก./ม²</small></dd></div></dl></div>
     </section>
     {query["treatment-saved"] === "1" && <p role="status" className="form-feedback">บันทึกประวัติการรักษาเรียบร้อยแล้ว</p>}
     <PatientCourses patientId={id} />
-    <PatientClinicalHistory patientId={id} page={historyPage} query={backParams.toString()} />
+    <PatientClinicalHistory expanded={typeof query["history-page"] === "string" || query["treatment-saved"] === "1"} patientId={id} page={historyPage} query={backParams.toString()} />
     <div className="patient-detail-grid">
       <DetailSection title="ข้อมูลส่วนตัวและการติดต่อ" items={[
         ["เลขประจำตัวผู้ป่วย (CN)", patient.hn], ["ประเภทผู้ป่วย", value("patient-type")], ["ประเภทบริการ", patientServiceLabel(value("service-type"))],
