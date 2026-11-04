@@ -11,6 +11,7 @@ async function main() {
   const hn = `TEST-${Date.now()}`;
   const email = `admin-test-${randomUUID()}@example.invalid`;
   const password = `Test-${randomUUID()}`;
+  const medicineId = randomUUID();
   let patientId: string | undefined;
   let labelId: string | undefined;
   try {
@@ -19,6 +20,7 @@ async function main() {
        VALUES ($1, 'ทดสอบฉลาก', 'ข้อมูลจำลอง', '2000-01-01', '0812345678', 'GN', $2) RETURNING id::text`, [hn, randomUUID()],
     );
     patientId = patient.rows[0].id;
+    await getDatabase().query("INSERT INTO rom_medicine(id,name,dosage_form,unit,stock) VALUES($1,'ยาทดสอบระบบ','ยาเม็ด','เม็ด',10)",[medicineId]);
     await page.goto("http://localhost:3000/dispensing");
     await expect(page).toHaveURL(/\/login$/);
     await page.getByLabel("อีเมลผู้ดูแลระบบ").fill(process.env.ADMIN_EMAIL!);
@@ -29,10 +31,8 @@ async function main() {
     await page.getByLabel("เลือกผู้ป่วย", { exact: false }).fill(hn);
     await page.getByRole("list", { name: "รายชื่อผู้ป่วยสำหรับจ่ายยา" }).getByRole("button").filter({ hasText: hn }).click();
     labelId = await page.locator('input[name="dispensing-key"]').inputValue();
-    await page.locator("#drug-drug-name").fill("ยาทดสอบระบบ");
-    await page.getByRole("combobox", { name: "รูปแบบยา", exact: false }).selectOption("ยาเม็ด");
+    await page.locator("#drug-medicine").selectOption(medicineId);
     await page.locator("#drug-quantity").fill("2");
-    await page.getByRole("combobox", { name: "หน่วย", exact: false }).selectOption("เม็ด");
     await page.locator("#drug-directions").fill("ข้อความวิธีใช้สำหรับทดสอบ\nบรรทัดที่สอง");
     await page.locator("#drug-warnings").fill("ข้อความคำเตือนสำหรับทดสอบ");
     await expect(page.getByRole("article", { name: "ฉลากยา" })).toContainText("ทดสอบฉลาก");
@@ -84,6 +84,7 @@ async function main() {
     console.log("PASS: dispensing selection, label preview/save/reload/print, mobile layout, admin validation, hashed credentials, new admin login and settings access.");
   } finally {
     if (labelId) await getDatabase().query("DELETE FROM rom_dispensing WHERE id = $1 AND patient_id = $2", [labelId, patientId]);
+    await getDatabase().query("DELETE FROM rom_medicine WHERE id=$1",[medicineId]);
     if (patientId) await getDatabase().query("DELETE FROM rom_patient WHERE id = $1 AND hn = $2", [patientId, hn]);
     await getDatabase().query("DELETE FROM rom_auth_user WHERE email = $1", [email]);
     await browser.close();

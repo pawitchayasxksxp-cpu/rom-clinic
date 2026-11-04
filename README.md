@@ -314,3 +314,14 @@ Run `npm run test:clinic-workflows` with the local dev server available on port
 3000. The integration test uses synthetic records and a generated small image,
 checks real authenticated uploads, downloads and reads Excel, prints PDFs, and
 removes only its own records and uploaded assets. Test artifacts are ignored.
+
+Dispensing selects active medicines from Master Data and copies their name, form,
+and unit into the saved label. Apply `npm run db:migrate:dispensing-stock` after
+the dispensing and Master Data migrations. Existing labels remain readable and
+do not affect inventory. New saves deduct stock atomically; retries of the same
+record do not deduct again. Reprinting does not change stock.
+Body Chart records have an edit button that updates the existing chart.
+
+Additional checks: `node --conditions=react-server --import tsx scripts/test-dispensing-stock.ts`
+and `node --conditions=react-server --import tsx scripts/test-body-chart-edit.ts`
+(the latter requires the local server on port 3000).

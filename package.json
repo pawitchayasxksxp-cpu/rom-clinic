@@ -25,7 +25,8 @@
     "db:migrate:body-chart": "node --conditions=react-server --import tsx scripts/migrate-body-chart.ts",
     "db:migrate:professional": "node --conditions=react-server --import tsx scripts/migrate-professional.ts",
     "db:migrate:master-data": "node --conditions=react-server --import tsx scripts/migrate-master-data.ts",
-    "test:clinic-workflows": "node --import tsx --test tests/unit/*.test.ts && node --conditions=react-server --import tsx scripts/test-clinic-workflows.ts"
+    "test:clinic-workflows": "node --import tsx --test tests/unit/*.test.ts && node --conditions=react-server --import tsx scripts/test-clinic-workflows.ts",
+    "db:migrate:dispensing-stock": "node --conditions=react-server --import tsx scripts/migrate-dispensing-stock.ts"
   },
   "dependencies": {
     "@next/env": "^16.4.5",
