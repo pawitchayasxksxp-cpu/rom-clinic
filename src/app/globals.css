@@ -2401,3 +2401,6 @@ select:not([multiple]) { max-width: 100%; min-width: 0; }
 }
 
 .patient-course-balance { white-space: pre-line; min-width: 170px; }
+
+.course-row-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.course-row-actions .button { white-space: nowrap; }
