@@ -38,7 +38,7 @@ export function validateBooking(form: FormData) {
     if (typeof value !== "string") return { error: "กรุณากรอกข้อมูลการจองให้ครบ" };
     data[key] = value.trim();
   }
-  if (!/^[A-Za-z0-9/-]{1,30}$/.test(data.hn)) return { error: "กรุณาระบุ HN ของผู้ป่วยที่ลงทะเบียนแล้ว" };
+  if (!/^[A-Za-z0-9/-]{1,30}$/.test(data.hn)) return { error: "กรุณาระบุ CN ของผู้ป่วยที่ลงทะเบียนแล้ว" };
   if (!isCalendarDate(data.date) || !/^([01]\d|2[0-3]):[0-5]\d$/.test(data.time)) return { error: "วันที่หรือเวลานัดหมายไม่ถูกต้อง" };
   if (new Date(`${data.date}T${data.time}:00+07:00`).getTime() <= Date.now()) return { error: "กรุณาเลือกวันและเวลานัดหมายในอนาคต" };
   if (!departments.some(item => item.code === data.department)) return { error: "กรุณาเลือกแผนก" };

@@ -30,7 +30,7 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | `/dashboard` | Today’s calendar booking statistics and confirmed appointments waiting for service, with department counts |
 | `/registration` | Live search while typing, paginated patient directory backed by PostgreSQL |
 | `/registration/[id]` | Protected patient details with an edit action, including contact, health data, and vital signs |
-| `/registration/[id]/edit` | Prefilled patient edit form; saves to the same record and retains the HN |
+| `/registration/[id]/edit` | Prefilled patient edit form; saves to the same record and retains the CN |
 | `/registration/new` | Hospital-style patient registration with validation and persistence |
 | `/calendar` | Full-width month calendar with booking cards in each day, expandable details, department filter, and booking form |
 | `/dispensing` | Patient-linked dispensing entry, live medication label preview, and 20 recent records |
@@ -42,7 +42,7 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 
 Run `npm run db:migrate:dispensing` after the patient migration to enable medication
 labels. Staff supply all medication and instruction text. Labels persist with a
-patient name/HN snapshot and creator; printing uses a 100 mm wide label with
+patient name/CN snapshot and creator; printing uses a 100 mm wide label with
 automatic height. Select the printer/paper in the browser print dialog. This feature
 does not prescribe medication or manage inventory.
 
@@ -68,16 +68,16 @@ Run `npm run db:migrate:patients` once before using the directory in each enviro
 This additive migration creates the patient table with RLS and revokes public API
 access. The application checks admin authorization when listing or saving patients.
 Forms validate required fields, dates, phone, department, vital signs, and postal codes on the
-server. New records receive an automatic HN (`HN-000001`, `HN-000002`, …) from a
+server. New records receive an automatic CN (`CN-000001`, `CN-000002`, …) from a
 database sequence, independently of patient row IDs. Reapply `npm run db:migrate:patients`
-when upgrading to enable this default. Existing HNs are preserved. The server ignores
-client-supplied HNs. Blood pressure (systolic/diastolic, mmHg) and pulse (beats/minute)
+when upgrading to enable this default. Existing CNs are preserved. The server ignores
+client-supplied CNs. Blood pressure (systolic/diastolic, mmHg) and pulse (beats/minute)
 are optional registration measurements stored with the patient and shown in the directory.
 Service category (Walk-in or course purchase) is chosen during registration and can
 be updated directly from the directory; patient details reflect the saved category.
 Directory search runs automatically while typing (300 ms debounce). The booking
-form uses an authenticated patient lookup with name/HN/phone search and explicit
-selection; raw HN entry is no longer needed.
+form uses an authenticated patient lookup with name/CN/phone search and explicit
+selection; raw CN entry is no longer needed.
 Repeated submission of the same form is idempotent. Registration does not issue a queue number.
 
 Authentication uses Better Auth with PostgreSQL-backed sessions, password hashing,
@@ -208,7 +208,7 @@ npm run test:patients
 npm run test:patient-edit
 ```
 
-This validates inputs and exercises registration, persistence, search, automatic HN sequencing,
+This validates inputs and exercises registration, persistence, search, automatic CN sequencing,
 vital-sign persistence, and mobile layout with synthetic records. It
 removes only the records created by that run. The configured bootstrap admin
 credentials must match the current database password.
@@ -288,7 +288,7 @@ Professional profiles include a name, profession, license number and optional
 issue/expiry dates. These are stored profile data, not license verification.
 Password minimum is 8 characters, with visibility toggles on password fields.
 Other choices expose a required notes field; notes persist in patient details and
-medication labels. New patient forms show the current/next HN without reserving it.
+medication labels. New patient forms show the current/next CN without reserving it.
 
 Every authenticated page has PDF, Excel and print controls. PDF uses the browser
 print dialog (choose Save as PDF); Excel exports persisted, authorized data and
@@ -328,7 +328,7 @@ and `node --conditions=react-server --import tsx scripts/test-body-chart-edit.ts
 
 Apply `npm run db:migrate:patient-delete` before deploying patient deletion.
 Deletion removes patients from active lists, pickers and appointments while retaining
-clinical records and stock movements. The original HN remains reserved.
+clinical records and stock movements. The original CN remains reserved.
 Repeat visits have fresh vital-sign fields in the treatment form and retain each
 measurement in dated treatment history. Registration measurements remain separate.
 Check both flows with `node --conditions=react-server --import tsx scripts/test-patient-delete-vitals.ts`.
@@ -358,3 +358,36 @@ port 3000, `node --conditions=react-server --import tsx scripts/test-billing.ts`
 The integration test uses and removes only synthetic fixtures; it checks actual
 payment/receipt/Excel/print flows and concurrent usage from separate processes.
 Receipt numbers may have gaps; they are never reset by tests.
+
+Apply `npm run db:migrate:patient-cn` after billing to convert standard HN-prefixed
+identifiers to CN and update matching identifier references on saved labels,
+certificates and receipts. Numeric suffixes, patient links and payment amounts
+are retained. Custom identifiers remain unchanged; duplicate CNs abort the
+transaction. The allocator keeps its existing next number and emits CN-000001
+format. Internal `hn` column/sequence names remain compatible with existing code.
+
+## Examination room and patient documents
+
+Apply `npm run db:migrate:examination` to enable sending registered patients to
+an examination room. One active room per patient prevents duplicate sends.
+The room form records chief complaint, illness history, physical examination,
+treatment/procedure and fresh vital signs. Saving completes the room and writes
+the treatment (including optional prepaid-course usage) in one transaction.
+
+Weight (kg), height (cm), and calculated BMI are available at registration and
+each visit. BMI is recalculated on the server; prior visit measurements remain
+unchanged. Certificate previews include the selected identity-document type and
+number; saved certificates snapshot these values. Explicit PDF/print actions use
+the browser print dialog (choose Save as PDF).
+
+Patient-detail PDF/print opens `/registration/[id]/print`: all saved patient
+fields and all clinical/medication/certificate/course/payment/booking/room records
+are arranged on one A4 page without Body Chart. Content reflows and scales to fit;
+large histories therefore use smaller text. Excel remains available separately.
+Desktop sidebar collapse is stored locally and keeps navigation icons available;
+the mobile menu retains its full-width overlay.
+
+Additional validation: `scripts/test-patient-cn.ts` checks CN migration in isolated
+rolled-back schemas; `scripts/test-examination-documents.ts` exercises the real
+room/certificate/report flow and renders the resulting one-page PDFs. Run these
+with `node --conditions=react-server --import tsx` and the local server on port 3000.

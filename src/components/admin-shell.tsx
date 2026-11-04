@@ -1,9 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import {
   Activity,
+  PanelLeftClose,
+  PanelLeftOpen,
   ReceiptText,
   ArrowUpRight,
   CalendarDays,
@@ -38,6 +40,9 @@ const icons = {
   master: Database,
   billing: ReceiptText,
 };
+let fallbackCollapsed = false;
+function sidebarSnapshot() { try { const saved = localStorage.getItem("rom-sidebar-collapsed"); return saved === null ? fallbackCollapsed : saved === "1"; } catch { return fallbackCollapsed; } }
+function subscribeSidebar(listener: () => void) { window.addEventListener("rom-sidebar-change",listener); window.addEventListener("storage",listener); return () => { window.removeEventListener("rom-sidebar-change",listener); window.removeEventListener("storage",listener); }; }
 export function AdminShell({
   user,
   children,
@@ -47,6 +52,8 @@ export function AdminShell({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const collapsed = useSyncExternalStore(subscribeSidebar,sidebarSnapshot,() => false);
+  const toggleSidebar = () => { fallbackCollapsed = !collapsed; try { localStorage.setItem("rom-sidebar-collapsed",fallbackCollapsed ? "1" : "0"); } catch {} window.dispatchEvent(new Event("rom-sidebar-change")); };
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -65,7 +72,7 @@ export function AdminShell({
     }
   }
   return (
-    <div className="admin-app">
+    <div className={`admin-app${collapsed ? " sidebar-collapsed" : ""}`}>
       {open && (
         <button
           className="sidebar-overlay"
@@ -74,6 +81,7 @@ export function AdminShell({
         />
       )}
       <aside
+        id="main-sidebar"
         className={`sidebar ${open ? "is-open" : ""}`}
         aria-label="เมนูหลัก"
       >
@@ -103,6 +111,8 @@ export function AdminShell({
               <Link
                 key={item.href}
                 href={item.href}
+                aria-label={item.label}
+                title={item.label}
                 className={`nav-item ${active ? "active" : ""}`}
                 aria-current={active ? "page" : undefined}
                 onClick={() => setOpen(false)}
@@ -137,6 +147,7 @@ export function AdminShell({
       <div className="app-main">
         <header className="topbar">
           <div className="breadcrumb">
+            <button type="button" className="icon-button sidebar-toggle-desktop" onClick={toggleSidebar} aria-label={collapsed ? "ขยายเมนู" : "หุบเมนู"} title={collapsed ? "ขยายเมนู" : "หุบเมนู"} aria-expanded={!collapsed} aria-controls="main-sidebar">{collapsed ? <PanelLeftOpen size={21} /> : <PanelLeftClose size={21} />}</button>
             <button
               className="icon-button mobile-only"
               onClick={() => setOpen(true)}

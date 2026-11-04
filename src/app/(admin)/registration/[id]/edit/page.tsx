@@ -25,7 +25,7 @@ export default async function EditPatientPage({ params }: { params: Promise<{ id
     "patient-type": values["patient-type"] || "ผู้ป่วยเดิม", "course-id": patient.course_id || "",
   });
   return <>
-    <PageHeading eyebrow="EDIT PATIENT" title="แก้ไขข้อมูลผู้ป่วย" description={`HN ${patient.hn} · ${patient.first_name} ${patient.last_name}`}>
+    <PageHeading eyebrow="EDIT PATIENT" title="แก้ไขข้อมูลผู้ป่วย" description={`CN ${patient.hn} · ${patient.first_name} ${patient.last_name}`}>
       <Link href={`/registration/${id}`} className="button button-secondary"><ArrowLeft size={18} />กลับรายละเอียดผู้ป่วย</Link>
     </PageHeading>
     <section className="panel"><PatientRegistrationForm courses={courses} patient={{ id, hn: patient.hn, values }} /></section>

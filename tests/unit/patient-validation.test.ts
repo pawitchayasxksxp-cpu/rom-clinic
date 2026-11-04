@@ -9,7 +9,7 @@ function form(changes: Record<string, string | undefined> = {}) {
 }
 
 test("accepts valid patient fields, trims names, and drops unrecognized input", () => {
-  const result = validatePatient(form({ role: "admin", hn: "HN-999999" }));
+  const result = validatePatient(form({ role: "admin", hn: "CN-999999" }));
   assert.equal(result.data?.["first-name"], "ทดสอบ");
   assert.equal(result.data?.role, undefined);
   assert.equal(result.data?.hn, undefined);

@@ -20,7 +20,7 @@ export async function createBooking(_state: { error: string }, form: FormData): 
        RETURNING id`,
       [data["booking-key"], data.hn, `${data.date}T${data.time}:00+07:00`, data.department, data.note],
     );
-    if (!saved.rowCount) return { error: "ไม่พบ HN นี้ กรุณาตรวจสอบรายชื่อหรือลงทะเบียนผู้ป่วยก่อน" };
+    if (!saved.rowCount) return { error: "ไม่พบ CN นี้ กรุณาตรวจสอบรายชื่อหรือลงทะเบียนผู้ป่วยก่อน" };
   } catch (error) {
     if ((error as { code?: string }).code === "23505") return { error: "ผู้ป่วยมีนัดในเวลานี้แล้ว กรุณาเลือกเวลาอื่น" };
     return { error: "บันทึกการจองไม่สำเร็จ กรุณาลองอีกครั้ง" };

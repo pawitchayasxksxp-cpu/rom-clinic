@@ -24,7 +24,7 @@ export async function registerPatient(_state: { error: string }, form: FormData)
     );
     if (!saved.rowCount) return { error: "คอร์สนี้ถูกลบแล้ว กรุณาเลือกคอร์สใหม่" };
   } catch (error) {
-    if ((error as { code?: string }).code === "23505") return { error: "HN นี้มีอยู่แล้ว กรุณาตรวจสอบรายชื่อผู้ป่วยก่อนลงทะเบียนซ้ำ" };
+    if ((error as { code?: string }).code === "23505") return { error: "CN นี้มีอยู่แล้ว กรุณาตรวจสอบรายชื่อผู้ป่วยก่อนลงทะเบียนซ้ำ" };
     return { error: "บันทึกไม่สำเร็จ กรุณาลองอีกครั้ง ข้อมูลที่กรอกยังอยู่ในฟอร์ม" };
   }
   revalidatePath("/registration");

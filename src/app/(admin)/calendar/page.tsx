@@ -53,7 +53,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 <div className="calendar-day-events">
                   {items.map(item => <details key={item.id} className={`calendar-event ${item.status}`}>
                     <summary><span className="calendar-event-time"><Clock3 size={13} />{item.time}<span>{statuses[item.status]}</span></span><strong>{item.patient_name}</strong><span className="calendar-event-department">{departmentName(item.department)}</span></summary>
-                    <div className="calendar-event-details"><p>HN {item.hn}</p><p>โทร. {item.phone}</p>{item.note && <p>{item.note}</p>}</div>
+                    <div className="calendar-event-details"><p>CN {item.hn}</p><p>โทร. {item.phone}</p>{item.note && <p>{item.note}</p>}</div>
                   </details>)}
                 </div>
               </div>;

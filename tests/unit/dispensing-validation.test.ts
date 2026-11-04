@@ -5,7 +5,7 @@ import { emptyDrugLabel, validateDispensing } from "../../src/lib/dispensing-val
 
 function form(changes: Record<string, string | undefined> = {}) {
   const form = new FormData();
-  for (const [key, value] of Object.entries({ ...emptyDrugLabel, "drug-name": " ยาทดสอบ ", strength: "ยาเม็ด", quantity: "2", unit: "เม็ด", directions: "ข้อความทดสอบ", dispenser: "เจ้าหน้าที่ทดสอบ", hn: "HN-000001", "dispensing-key": randomUUID(), ...changes })) if (value !== undefined) form.set(key, value);
+  for (const [key, value] of Object.entries({ ...emptyDrugLabel, "drug-name": " ยาทดสอบ ", strength: "ยาเม็ด", quantity: "2", unit: "เม็ด", directions: "ข้อความทดสอบ", dispenser: "เจ้าหน้าที่ทดสอบ", hn: "CN-000001", "dispensing-key": randomUUID(), ...changes })) if (value !== undefined) form.set(key, value);
   return form;
 }
 

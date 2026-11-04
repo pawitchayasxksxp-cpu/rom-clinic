@@ -1,7 +1,8 @@
+import { bodyMeasurements } from "./body-measurements";
 import { patientOtherFields } from "./patient-field-display";
 import { departments } from "./navigation";
 
-const fields = ["patient-type", "service-type", "course-id", "identity-type", "identity-number", "title", "first-name", "last-name", "birth-date", "sex", "nationality", "marital-status", "occupation", "phone", "email", "registered-line", "registered-subdistrict", "registered-district", "registered-province", "registered-postal-code", "current-line", "current-subdistrict", "current-district", "current-province", "current-postal-code", "emergency-name", "emergency-relationship", "emergency-phone", "coverage", "coverage-provider", "blood-group", "allergy-status", "allergy-details", "conditions", "bp-systolic", "bp-diastolic", "pulse", "department", "symptoms", "priority"] as const;
+const fields = ["patient-type", "service-type", "course-id", "identity-type", "identity-number", "title", "first-name", "last-name", "birth-date", "sex", "nationality", "marital-status", "occupation", "phone", "email", "registered-line", "registered-subdistrict", "registered-district", "registered-province", "registered-postal-code", "current-line", "current-subdistrict", "current-district", "current-province", "current-postal-code", "emergency-name", "emergency-relationship", "emergency-phone", "coverage", "coverage-provider", "blood-group", "allergy-status", "allergy-details", "conditions", "bp-systolic", "bp-diastolic", "pulse", "weight", "height", "department", "symptoms", "priority"] as const;
 
 export function validatePatient(form: FormData, options: { legacyDepartment?: string } = {}) {
   const data: Record<string, string> = {};
@@ -37,5 +38,7 @@ export function validatePatient(form: FormData, options: { legacyDepartment?: st
     if (data[key].includes("อื่น") && !data[`${key}-other`]) return { error: "กรุณากรอกหมายเหตุสำหรับตัวเลือกอื่น ๆ ให้ครบ" };
     if (!data[key].includes("อื่น")) data[`${key}-other`] = "";
   }
+  try { Object.assign(data, bodyMeasurements(data.weight, data.height)); }
+  catch(error) { return {error:error instanceof Error ? error.message : "น้ำหนักหรือส่วนสูงไม่ถูกต้อง"}; }
   return { data };
 }

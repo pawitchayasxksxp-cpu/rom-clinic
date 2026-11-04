@@ -77,7 +77,7 @@ async function main() {
     expect(updated.rows[0].details["allergy-details"]).toBe("");
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    console.log("PASS: protected editing, prefilled fields, validation retention, unchanged HN/creation date, saved updates, legacy department handling, clearing optional values, cancel, mobile layout.");
+    console.log("PASS: protected editing, prefilled fields, validation retention, unchanged CN/creation date, saved updates, legacy department handling, clearing optional values, cancel, mobile layout.");
   } finally {
     if (patientId) await getDatabase().query("DELETE FROM rom_patient WHERE id = $1 AND hn = $2", [patientId, hn]);
     await browser.close();

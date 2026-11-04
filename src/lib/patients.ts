@@ -86,8 +86,8 @@ export async function searchPatientChoices(search: string) {
 export async function patientHnPreview() {
   await requireAdmin();
   const result = await getDatabase().query<{ next: string; latest: string | null }>(
-    `SELECT 'HN-' || lpad(next_number::text, greatest(6, length(next_number::text)), '0') AS next,
-      CASE WHEN is_called THEN 'HN-' || lpad(last_value::text, greatest(6, length(last_value::text)), '0') ELSE NULL END AS latest
+    `SELECT 'CN-' || lpad(next_number::text, greatest(6, length(next_number::text)), '0') AS next,
+      (SELECT hn FROM rom_patient WHERE hn ~ '^CN-[0-9]+$' ORDER BY substring(hn FROM '^CN-([0-9]+)$')::bigint DESC LIMIT 1) AS latest
      FROM (SELECT last_value, is_called, CASE WHEN is_called THEN last_value + 1 ELSE last_value END AS next_number FROM rom_patient_hn_seq) AS numbering`,
   );
   return result.rows[0];

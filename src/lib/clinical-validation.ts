@@ -1,16 +1,17 @@
+import { bodyMeasurements } from "./body-measurements";
 import { bangkokToday, isCalendarDate } from "./calendar";
 import { departments } from "./navigation";
 
-export const treatmentFields = ["visit-date", "visit-time", "department", "symptoms", "examination", "assessment", "treatment", "provider", "follow-up", "bp-systolic", "bp-diastolic", "pulse"] as const;
+export const treatmentFields = ["visit-date", "visit-time", "department", "symptoms", "illness-history", "examination", "assessment", "treatment", "provider", "follow-up", "bp-systolic", "bp-diastolic", "pulse", "weight", "height"] as const;
 export const certificateFields = ["issue-date", "exam-date", "facility", "facility-address", "examination", "opinion", "rest-from", "rest-until", "provider", "profession", "license"] as const;
 
 function readFields(form: FormData, fields: readonly string[]) {
   const data: Record<string, string> = {};
   for (const field of fields) {
-    const value = form.get(field);
+    const value = ["illness-history", "weight", "height"].includes(field) ? form.get(field) ?? "" : form.get(field);
     if (typeof value !== "string") return null;
     data[field] = value.trim();
-    const limit = ["symptoms", "examination", "assessment", "treatment", "opinion", "facility-address"].includes(field) ? 4000 : 254;
+    const limit = ["symptoms", "illness-history", "examination", "assessment", "treatment", "opinion", "facility-address"].includes(field) ? 4000 : 254;
     if (data[field].length > limit) return null;
   }
   return data;
@@ -37,6 +38,8 @@ export function validateTreatment(form: FormData): ClinicalResult {
   if (data["follow-up"] && (!isCalendarDate(data["follow-up"]) || data["follow-up"] < data["visit-date"])) return { error: "วันติดตามอาการต้องไม่ก่อนวันที่รับบริการ" };
   for (const key of ["bp-systolic", "bp-diastolic", "pulse"]) if (data[key] && !/^[1-9][0-9]{0,2}$/.test(data[key])) return { error: "ความดันและชีพจรต้องเป็นจำนวนเต็ม 1–999 หรือเว้นว่าง" };
   if (Boolean(data["bp-systolic"]) !== Boolean(data["bp-diastolic"])) return { error: "กรุณากรอกความดันตัวบนและตัวล่างให้ครบ" };
+  try { Object.assign(data, bodyMeasurements(data.weight || "", data.height || "")); }
+  catch(error) { return {error:error instanceof Error ? error.message : "น้ำหนักหรือส่วนสูงไม่ถูกต้อง"}; }
   return { data, ...identity };
 }
 

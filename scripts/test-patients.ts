@@ -41,7 +41,7 @@ async function main() {
       await expect(page).toHaveURL(/\/registration\?saved=1$/);
       const record = await getDatabase().query("SELECT id::text, hn, details FROM rom_patient WHERE registration_key = $1", [registrationKeys[index]]);
       const hn: string = record.rows[0].hn;
-      expect(hn).toMatch(/^HN-\d{6,}$/);
+      expect(hn).toMatch(/^CN-\d{6,}$/);
       if (previousHn) expect(BigInt(hn.slice(3))).toBeGreaterThan(BigInt(previousHn.slice(3)));
       previousHn = hn;
       expect(record.rows[0].details["bp-systolic"]).toBe("120");
@@ -81,7 +81,7 @@ async function main() {
     await expect(page.getByRole("heading", { name: "ไม่พบข้อมูลผู้ป่วย", exact: true })).toBeVisible();
     await page.goto("http://localhost:3000/registration/9223372036854775807");
     await expect(page.getByRole("heading", { name: "ไม่พบข้อมูลผู้ป่วย", exact: true })).toBeVisible();
-    console.log("PASS: protected registration, automatic increasing HN, vital validation, retained fields, stored BP/pulse, directory display, search, reload, protected patient details, back navigation, missing patient handling, mobile layout.");
+    console.log("PASS: protected registration, automatic increasing CN, vital validation, retained fields, stored BP/pulse, directory display, search, reload, protected patient details, back navigation, missing patient handling, mobile layout.");
   } finally {
     await getDatabase().query("DELETE FROM rom_patient WHERE registration_key = ANY($1::uuid[])", [registrationKeys]);
     await browser.close();

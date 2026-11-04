@@ -39,7 +39,7 @@ export function PatientLiveSearch({ initialQuery }: { initialQuery: string }) {
     <label htmlFor="patient-search">ค้นหาผู้ป่วย</label>
     <div>
       <Search size={19} aria-hidden="true" />
-      <input id="patient-search" name="q" value={query} onChange={event => setQuery(event.target.value)} maxLength={100} placeholder="พิมพ์ชื่อ นามสกุล HN หรือเบอร์โทรศัพท์" onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} aria-describedby="patient-search-status" />
+      <input id="patient-search" name="q" value={query} onChange={event => setQuery(event.target.value)} maxLength={100} placeholder="พิมพ์ชื่อ นามสกุล CN หรือเบอร์โทรศัพท์" onCompositionStart={() => setComposing(true)} onCompositionEnd={() => setComposing(false)} aria-describedby="patient-search-status" />
       {query && <button type="button" className="button button-secondary" onClick={() => { setQuery(""); search(""); }}>ล้างค้นหา</button>}
     </div>
     <p id="patient-search-status" className="form-note" role="status">{pending ? "กำลังค้นหา…" : "ค้นหาอัตโนมัติขณะพิมพ์"}</p>

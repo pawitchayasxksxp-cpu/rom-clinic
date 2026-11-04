@@ -1,8 +1,9 @@
 import { DeletePatientButton } from "@/components/delete-patient-button";
 import { PatientCourses } from "@/components/patient-courses";
+import { SendToExaminationButton } from "@/components/send-to-examination-button";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound } from "lucide-react";
+import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound, FileDown } from "lucide-react";
 import { requireAdmin } from "@/lib/session";
 import { getPatient } from "@/lib/patients";
 import { getCourse } from "@/lib/courses";
@@ -52,8 +53,8 @@ export default async function PatientDetailPage({ params, searchParams }: {
   const bp = value("bp-systolic") && value("bp-diastolic") ? `${value("bp-systolic")}/${value("bp-diastolic")}` : "—";
   return <>
     <div className="patient-detail-back"><Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link></div>
-    <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`HN ${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
-      <div className="registration-action-buttons"><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><DeletePatientButton id={id} hn={patient.hn} name={`${patient.first_name} ${patient.last_name}`} /></div>
+    <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`CN ${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
+      <div className="registration-action-buttons"><Link href={`/registration/${id}/print?print=1`} className="button button-secondary"><FileDown size={18} />PDF ข้อมูลผู้ป่วยทั้งหมด</Link><SendToExaminationButton patientId={id} cn={patient.hn} /><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><DeletePatientButton id={id} hn={patient.hn} name={`${patient.first_name} ${patient.last_name}`} /></div>
     </PageHeading>
     {query.saved === "1" && <p role="status" className="form-feedback">บันทึกการแก้ไขข้อมูลผู้ป่วยเรียบร้อยแล้ว</p>}
     <section className="panel patient-profile" aria-label="ข้อมูลสรุปผู้ป่วย">
@@ -69,7 +70,7 @@ export default async function PatientDetailPage({ params, searchParams }: {
     <PatientClinicalHistory patientId={id} page={historyPage} query={backParams.toString()} />
     <div className="patient-detail-grid">
       <DetailSection title="ข้อมูลส่วนตัวและการติดต่อ" items={[
-        ["เลขประจำตัวผู้ป่วย (HN)", patient.hn], ["ประเภทผู้ป่วย", value("patient-type")], ["ประเภทบริการ", patientServiceLabel(value("service-type"))],
+        ["เลขประจำตัวผู้ป่วย (CN)", patient.hn], ["ประเภทผู้ป่วย", value("patient-type")], ["ประเภทบริการ", patientServiceLabel(value("service-type"))],
         ["คอร์ส", course ? `${course.name}${course.archived ? " (คอร์สที่ลบแล้ว)" : ""}` : ""], ["ราคาคอร์ส", course ? new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB" }).format(Number(course.price)) : ""],
         ["ชื่อ–นามสกุล", `${patient.first_name} ${patient.last_name}`], ["คำนำหน้าชื่อ", value("title")],
         ["ประเภทเอกสารยืนยันตัวตน", value("identity-type")], ["เลขที่เอกสาร", value("identity-number")],
@@ -82,7 +83,7 @@ export default async function PatientDetailPage({ params, searchParams }: {
         ["อาการสำคัญ / เหตุผลที่มารับบริการ", value("symptoms")], ["ประวัติแพ้ยา / อาหาร", value("allergy-status")],
         ["สิ่งที่แพ้และอาการแพ้", value("allergy-details")], ["โรคประจำตัว / ยาที่ใช้ประจำ", value("conditions")],
         ["ความดันตัวบน (mmHg)", value("bp-systolic")], ["ความดันตัวล่าง (mmHg)", value("bp-diastolic")],
-        ["ชีพจร (ครั้ง/นาที)", value("pulse")],
+        ["ชีพจร (ครั้ง/นาที)", value("pulse")], ["น้ำหนักเมื่อลงทะเบียน (กก.)", value("weight")], ["ส่วนสูงเมื่อลงทะเบียน (ซม.)", value("height")], ["BMI เมื่อลงทะเบียน (กก./ม²)", value("bmi")],
       ]} />
       <DetailSection title="ที่อยู่ตามทะเบียนบ้าน" items={address("registered")} />
       <DetailSection title="ที่อยู่ปัจจุบัน (กรณีต่างจากทะเบียนบ้าน)" items={address("current")} />

@@ -12,17 +12,17 @@ CREATE TABLE IF NOT EXISTS rom_patient (
   registration_key uuid NOT NULL UNIQUE,
   created_at timestamptz NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
--- Preserve existing HNs. Reapplying this migration never resets numbering.
+-- Preserve existing CNs. Reapplying this migration never resets numbering.
 LOCK TABLE rom_patient IN ACCESS EXCLUSIVE MODE;
 CREATE SEQUENCE IF NOT EXISTS rom_patient_hn_seq START WITH 1;
 SELECT setval('rom_patient_hn_seq',
-  GREATEST(last_value, COALESCE((SELECT MAX(substring(hn FROM '^HN-([0-9]+)$')::bigint) FROM rom_patient), 0)),
-  is_called OR EXISTS (SELECT 1 FROM rom_patient WHERE hn ~ '^HN-[0-9]+$'))
+  GREATEST(last_value, COALESCE((SELECT MAX(substring(hn FROM '^[HC]N-([0-9]+)$')::bigint) FROM rom_patient), 0)),
+  is_called OR EXISTS (SELECT 1 FROM rom_patient WHERE hn ~ '^[HC]N-[0-9]+$'))
 FROM rom_patient_hn_seq;
 -- Evaluate nextval once; expand the number past six digits without truncation.
 CREATE OR REPLACE FUNCTION rom_next_patient_hn() RETURNS text
 LANGUAGE sql VOLATILE AS $$
-  SELECT 'HN-' || lpad(number::text, greatest(6, length(number::text)), '0')
+  SELECT 'CN-' || lpad(number::text, greatest(6, length(number::text)), '0')
   FROM (SELECT nextval('rom_patient_hn_seq') AS number) AS next_hn;
 $$;
 ALTER TABLE rom_patient ALTER COLUMN hn SET DEFAULT rom_next_patient_hn();

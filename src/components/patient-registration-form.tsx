@@ -1,4 +1,5 @@
 "use client";
+import { BodyMeasurementFields } from "./body-measurement-fields";
 
 import { createContext, startTransition, useActionState, useContext, useState } from "react";
 import Link from "next/link";
@@ -75,7 +76,7 @@ export function PatientRegistrationForm({ registrationKey, patient, courses = []
         <legend><span>01</span> ข้อมูลส่วนตัวผู้ป่วย</legend>
         <div className="field-grid">
           <Field id="patient-type" label="ประเภทผู้ป่วย" required options={["ผู้ป่วยใหม่", "ผู้ป่วยเดิม"]} />
-          <div className="field"><label htmlFor="hn">เลขประจำตัวผู้ป่วย (HN)</label><input id="hn" readOnly value={patient?.hn || hnPreview?.next || "ระบบสร้างให้อัตโนมัติหลังบันทึก"} aria-describedby="hn-help" /><p id="hn-help" className="form-note">{patient ? "HN ประจำตัวผู้ป่วย" : `เลขถัดไป ณ เวลาเปิดหน้า · เลขล่าสุดที่ออก: ${hnPreview?.latest || "ยังไม่มี"}`}</p></div>
+          <div className="field"><label htmlFor="hn">เลขประจำตัวผู้ป่วย (CN)</label><input id="hn" readOnly value={patient?.hn || hnPreview?.next || "ระบบสร้างให้อัตโนมัติหลังบันทึก"} aria-describedby="hn-help" /><p id="hn-help" className="form-note">{patient ? "CN ประจำตัวผู้ป่วย" : `เลขถัดไป ณ เวลาเปิดหน้า · เลขล่าสุดที่ออก: ${hnPreview?.latest || "ยังไม่มี"}`}</p></div>
           <div className="field"><label htmlFor="service-type">ประเภทบริการ <span>*</span></label><select id="service-type" name="service-type" required value={serviceType} onChange={event => setServiceType(event.target.value)}>{patientServices.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
           <div className="field"><label htmlFor="course-id">คอร์ส (กรณีซื้อคอร์ส)</label><select id="course-id" name="course-id" disabled={serviceType !== "course"} defaultValue={values["course-id"] || ""}><option value="">เลือกคอร์ส</option>{courses.map(course => <option key={course.id} value={course.id}>{course.name} · ฿{new Intl.NumberFormat("th-TH").format(Number(course.price))}{course.archived ? " (คอร์สเดิมที่ลบแล้ว)" : ""}</option>)}</select></div>
           <Field id="identity-type" label="ประเภทเอกสารยืนยันตัวตน" options={["บัตรประชาชน", "หนังสือเดินทาง", "เอกสารอื่น / ไม่มีเอกสาร"]} />
@@ -128,6 +129,7 @@ export function PatientRegistrationForm({ registrationKey, patient, courses = []
           <textarea id="allergy-details" name="allergy-details" defaultValue={values["allergy-details"] || ""} rows={2} placeholder="ชื่อยา / อาหาร และอาการที่เคยเกิดขึ้น" />
         </div>
         <h3 className="registration-subheading">สัญญาณชีพ</h3>
+        <BodyMeasurementFields initialWeight={values.weight} initialHeight={values.height} />
         <div className="field-grid">
           <Field id="bp-systolic" label="ความดันตัวบน (mmHg)" type="number" min={1} max={999} placeholder="เช่น 120" />
           <Field id="bp-diastolic" label="ความดันตัวล่าง (mmHg)" type="number" min={1} max={999} placeholder="เช่น 80" />

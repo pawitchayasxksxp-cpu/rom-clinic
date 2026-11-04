@@ -8,7 +8,7 @@ export function DrugLabel({ data, patientName, hn, date }: { data: DrugLabelData
   const unitLabel = data.unit === "อื่น ๆ" ? data["unit-other"] || data.unit : data.unit;
   return <article className="drug-label" aria-label="ฉลากยา">
     <header><span className="document-clinic-brand"><ClinicLogo size={44} /><strong>ROM Clinic</strong></span><span>ฉลากยา</span></header>
-    <div className="drug-label-patient"><strong>{patientName || "ชื่อผู้ป่วย"}</strong><span>HN {hn || "—"}</span><span>วันที่จ่ายยา {date}</span></div>
+    <div className="drug-label-patient"><strong>{patientName || "ชื่อผู้ป่วย"}</strong><span>CN {hn || "—"}</span><span>วันที่จ่ายยา {date}</span></div>
     <h2>{data["drug-name"] || "ชื่อยา"}{!isDosageForm && data.strength ? ` ${data.strength}` : ""}</h2>
     {isDosageForm && <p>รูปแบบยา: {formLabel}</p>}
     <p className="drug-label-quantity">จำนวน {data.quantity || "—"} {unitLabel}</p>
