@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, Clock3 } from "lucide-react";
 import { requireAdmin } from "@/lib/session";
 import { bangkokToday, calendarMonth, isCalendarDate } from "@/lib/calendar";
 import { listBookings } from "@/lib/bookings";
-import { departments } from "@/lib/navigation";
+import { departments, departmentName } from "@/lib/navigation";
 import { PageHeading } from "@/components/page-ui";
 import { BookingForm } from "@/components/booking-form";
 
@@ -52,7 +52,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
                 <div className="calendar-day-heading"><Link href={url(date)} className="calendar-day-number" aria-current={date === selected ? "date" : undefined} aria-label={date}>{Number(date.slice(-2))}</Link>{date === today && <small>วันนี้</small>}{items.length > 0 && <small className="calendar-day-count">{items.length} นัด</small>}</div>
                 <div className="calendar-day-events">
                   {items.map(item => <details key={item.id} className={`calendar-event ${item.status}`}>
-                    <summary><span className="calendar-event-time"><Clock3 size={13} />{item.time}<span>{statuses[item.status]}</span></span><strong>{item.patient_name}</strong><span className="calendar-event-department">{departments.find(value => value.code === item.department)?.name}</span></summary>
+                    <summary><span className="calendar-event-time"><Clock3 size={13} />{item.time}<span>{statuses[item.status]}</span></span><strong>{item.patient_name}</strong><span className="calendar-event-department">{departmentName(item.department)}</span></summary>
                     <div className="calendar-event-details"><p>HN {item.hn}</p><p>โทร. {item.phone}</p>{item.note && <p>{item.note}</p>}</div>
                   </details>)}
                 </div>

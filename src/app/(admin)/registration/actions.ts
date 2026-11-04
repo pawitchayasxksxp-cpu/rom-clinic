@@ -15,12 +15,10 @@ export async function registerPatient(_state: { error: string }, form: FormData)
   const data = result.data;
   try {
     await getDatabase().query(
-      `WITH next_patient AS (SELECT nextval(pg_get_serial_sequence('rom_patient', 'id')) AS id)
-       INSERT INTO rom_patient (id, hn, first_name, last_name, birth_date, phone, department, details, registration_key)
-       OVERRIDING SYSTEM VALUE
-       SELECT id, COALESCE($1, 'ROM-' || lpad(id::text, 8, '0')), $2, $3, $4::date, $5, $6, $7::jsonb, $8::uuid FROM next_patient
+      `INSERT INTO rom_patient (first_name, last_name, birth_date, phone, department, details, registration_key)
+       VALUES ($1, $2, $3::date, $4, $5, $6::jsonb, $7::uuid)
        ON CONFLICT (registration_key) DO NOTHING`,
-      [data.hn || null, data["first-name"], data["last-name"], data["birth-date"], data.phone, data.department, JSON.stringify(data), key],
+      [data["first-name"], data["last-name"], data["birth-date"], data.phone, data.department, JSON.stringify(data), key],
     );
   } catch (error) {
     if ((error as { code?: string }).code === "23505") return { error: "HN นี้มีอยู่แล้ว กรุณาตรวจสอบรายชื่อผู้ป่วยก่อนลงทะเบียนซ้ำ" };
@@ -28,4 +26,21 @@ export async function registerPatient(_state: { error: string }, form: FormData)
   }
   revalidatePath("/registration");
   redirect("/registration?saved=1");
+}
+
+export async function updatePatientService(id: string, service: string): Promise<{ error: string }> {
+  await requireAdmin();
+  if (!/^[1-9]\d{0,18}$/.test(id) || BigInt(id) > BigInt("9223372036854775807") || !["walk-in", "course"].includes(service)) return { error: "ข้อมูลประเภทบริการไม่ถูกต้อง" };
+  try {
+    const result = await getDatabase().query(
+      `UPDATE rom_patient SET details = jsonb_set(details, '{service-type}', to_jsonb($2::text), true) WHERE id = $1 RETURNING id`,
+      [id, service],
+    );
+    if (!result.rowCount) return { error: "ไม่พบข้อมูลผู้ป่วย" };
+  } catch {
+    return { error: "บันทึกประเภทบริการไม่สำเร็จ กรุณาลองอีกครั้ง" };
+  }
+  revalidatePath("/registration");
+  revalidatePath(`/registration/${id}`);
+  return { error: "" };
 }

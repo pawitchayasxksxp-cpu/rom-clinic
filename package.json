@@ -15,7 +15,10 @@
     "db:migrate:patients": "node --conditions=react-server --import tsx scripts/migrate-patients.ts",
     "test:patients": "node --import tsx --test tests/unit/patient-validation.test.ts && node --conditions=react-server --import tsx scripts/test-patients.ts",
     "db:migrate:bookings": "node --conditions=react-server --import tsx scripts/migrate-bookings.ts",
-    "test:calendar": "node --import tsx --test tests/unit/calendar.test.ts && node --conditions=react-server --import tsx scripts/test-calendar.ts"
+    "test:calendar": "node --import tsx --test tests/unit/calendar.test.ts && node --conditions=react-server --import tsx scripts/test-calendar.ts",
+    "db:migrate:dispensing": "node --conditions=react-server --import tsx scripts/migrate-dispensing.ts",
+    "test:dispensing-admin": "node --import tsx --test tests/unit/dispensing-validation.test.ts && node --conditions=react-server --import tsx scripts/test-dispensing-admin.ts",
+    "test:dashboard": "node --conditions=react-server --import tsx scripts/test-dashboard-bookings.ts"
   },
   "dependencies": {
     "@next/env": "^16.4.5",

@@ -4,6 +4,7 @@ import { getDatabase } from "./db";
 
 export type Booking = {
   id: string;
+  patient_id: string;
   date: string;
   time: string;
   patient_name: string;
@@ -17,7 +18,7 @@ export type Booking = {
 export async function listBookings(start: string, end: string, department: string) {
   await requireAdmin();
   const result = await getDatabase().query<Booking>(
-    `SELECT b.id, to_char(b.starts_at AT TIME ZONE 'Asia/Bangkok', 'YYYY-MM-DD') AS date,
+    `SELECT b.id, p.id::text AS patient_id, to_char(b.starts_at AT TIME ZONE 'Asia/Bangkok', 'YYYY-MM-DD') AS date,
       to_char(b.starts_at AT TIME ZONE 'Asia/Bangkok', 'HH24:MI') AS time,
       concat_ws(' ', p.first_name, p.last_name) AS patient_name,
       COALESCE(p.hn, 'ROM-' || lpad(p.id::text, 8, '0')) AS hn,

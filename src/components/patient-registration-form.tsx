@@ -4,6 +4,7 @@ import { startTransition, useActionState } from "react";
 import Link from "next/link";
 import { registerPatient } from "@/app/(admin)/registration/actions";
 import { ClipboardPlus } from "lucide-react";
+import { patientServices } from "@/lib/patient-service";
 import { departments } from "@/lib/navigation";
 
 type FieldProps = {
@@ -15,9 +16,11 @@ type FieldProps = {
   options?: readonly string[];
   autoComplete?: string;
   maxLength?: number;
+  min?: number;
+  max?: number;
 };
 
-function Field({ id, label, required, type = "text", placeholder, options, autoComplete, maxLength }: FieldProps) {
+function Field({ id, label, required, type = "text", placeholder, options, autoComplete, maxLength, min, max }: FieldProps) {
   return (
     <div className="field">
       <label htmlFor={id}>{label}{required && <span> *</span>}</label>
@@ -27,7 +30,7 @@ function Field({ id, label, required, type = "text", placeholder, options, autoC
           {options.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
       ) : (
-        <input id={id} name={id} type={type} min={type === "date" ? "1850-01-01" : undefined} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
+        <input id={id} name={id} type={type} min={type === "date" ? "1850-01-01" : min} max={max} step={type === "number" ? 1 : undefined} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
       )}
     </div>
   );
@@ -61,7 +64,8 @@ export function PatientRegistrationForm({ registrationKey }: { registrationKey: 
         <legend><span>01</span> ข้อมูลส่วนตัวผู้ป่วย</legend>
         <div className="field-grid">
           <Field id="patient-type" label="ประเภทผู้ป่วย" required options={["ผู้ป่วยใหม่", "ผู้ป่วยเดิม"]} />
-          <Field id="hn" label="เลขประจำตัวผู้ป่วย (HN)" placeholder="สำหรับผู้ป่วยที่มี HN แล้ว" />
+          <div className="field"><label htmlFor="hn">เลขประจำตัวผู้ป่วย (HN)</label><input id="hn" readOnly value="ระบบสร้างให้อัตโนมัติหลังบันทึก" aria-describedby="hn-help" /><p id="hn-help" className="form-note">รูปแบบ HN-000001, HN-000002 ต่อเนื่องอัตโนมัติ</p></div>
+          <div className="field"><label htmlFor="service-type">ประเภทบริการ <span>*</span></label><select id="service-type" name="service-type" required defaultValue="walk-in">{patientServices.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
           <Field id="identity-type" label="ประเภทเอกสารยืนยันตัวตน" options={["บัตรประชาชน", "หนังสือเดินทาง", "เอกสารอื่น / ไม่มีเอกสาร"]} />
           <Field id="identity-number" label="เลขที่เอกสารยืนยันตัวตน" placeholder="เลขบัตรประชาชน หรือหนังสือเดินทาง" maxLength={30} />
           <Field id="title" label="คำนำหน้าชื่อ" options={["นาย", "นาง", "นางสาว", "เด็กชาย", "เด็กหญิง", "อื่น ๆ"]} />
@@ -110,6 +114,12 @@ export function PatientRegistrationForm({ registrationKey }: { registrationKey: 
         <div className="field">
           <label htmlFor="allergy-details">สิ่งที่แพ้และอาการแพ้</label>
           <textarea id="allergy-details" name="allergy-details" rows={2} placeholder="ชื่อยา / อาหาร และอาการที่เคยเกิดขึ้น" />
+        </div>
+        <h3 className="registration-subheading">สัญญาณชีพ</h3>
+        <div className="field-grid">
+          <Field id="bp-systolic" label="ความดันตัวบน (mmHg)" type="number" min={1} max={999} placeholder="เช่น 120" />
+          <Field id="bp-diastolic" label="ความดันตัวล่าง (mmHg)" type="number" min={1} max={999} placeholder="เช่น 80" />
+          <Field id="pulse" label="ชีพจร (ครั้ง/นาที)" type="number" min={1} max={999} placeholder="เช่น 72" />
         </div>
         <Field id="conditions" label="โรคประจำตัว / ยาที่ใช้ประจำ" placeholder="ระบุตามข้อมูลที่ผู้ป่วยแจ้ง" />
         <div className="field">

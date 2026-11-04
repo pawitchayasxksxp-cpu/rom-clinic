@@ -5,6 +5,7 @@ const paths = [
   "/registration",
   "/registration/new",
   "/calendar",
+  "/dispensing",
   "/queues",
   "/history",
   "/display",
@@ -93,6 +94,7 @@ test("admin can login, navigate all menus, reload, and logout revokes the sessio
   for (const [path, title] of [
     ["/registration", "รายชื่อผู้ป่วย"],
     ["/calendar", "ปฏิทินการจอง"],
+    ["/dispensing", "จ่ายยา"],
     ["/queues", "จัดการคิว"],
     ["/history", "ประวัติประจำวัน"],
     ["/display", "จอแสดงคิว"],

@@ -20,6 +20,8 @@ async function main() {
       [hn, randomUUID()],
     );
     patientId = patient.rows[0].id;
+    const unauthorized = await page.request.get("http://localhost:3000/api/patients/search?q=test");
+    expect(unauthorized.status()).toBe(401);
     await page.goto("http://localhost:3000/calendar");
     await expect(page).toHaveURL(/\/login$/);
     await page.getByLabel("อีเมลผู้ดูแลระบบ").fill(process.env.ADMIN_EMAIL!);
@@ -28,15 +30,18 @@ async function main() {
     await expect(page).toHaveURL(/\/dashboard$/);
     await page.getByRole("navigation").getByRole("link", { name: "ปฏิทินการจอง", exact: true }).click();
     await expect(page.getByRole("heading", { name: "ปฏิทินการจอง", exact: true })).toBeVisible();
-    await page.locator("#booking-hn").fill("NONEXISTENT");
+    await page.getByLabel("เลือกผู้ป่วย", { exact: false }).fill("NONEXISTENT-TEST");
+    await expect(page.locator(".patient-picker-results")).toContainText("ไม่พบผู้ป่วยที่ค้นหา");
     await page.locator("#booking-date").fill(date);
     await page.locator("#booking-time").fill("09:30");
-    await page.locator("#booking-department").selectOption("GN");
+    await page.locator("#booking-department").selectOption("SP");
     await page.locator("#booking-note").fill("ข้อมูลจำลองสำหรับทดสอบ");
     await page.getByRole("button", { name: "บันทึกการจอง", exact: true }).click();
-    await expect(page.locator(".form-error")).toContainText("ไม่พบ HN");
+    await expect(page.locator('input[name="hn"]')).toHaveValue("");
     await expect(page.locator("#booking-time")).toHaveValue("09:30");
-    await page.locator("#booking-hn").fill(hn);
+    await page.getByLabel("เลือกผู้ป่วย", { exact: false }).fill(hn);
+    await page.getByRole("list", { name: "รายชื่อผู้ป่วยสำหรับจอง" }).getByRole("button").filter({ hasText: hn }).click();
+    await expect(page.locator('input[name="hn"]')).toHaveValue(hn);
     await page.getByRole("button", { name: "บันทึกการจอง", exact: true }).click();
     await expect(page).toHaveURL(new RegExp(`/calendar\\?date=${date}&saved=1$`));
     const agenda = page.locator(`.calendar-day[data-date="${date}"]`);
@@ -44,24 +49,27 @@ async function main() {
     await expect(agenda).toContainText(hn);
     await expect(agenda).toContainText("09:30");
     await expect(agenda).toContainText("ยืนยันนัด");
+    await expect(agenda).toContainText("นวดสปอร์ตและฟื้นฟูนักกีฬา");
     await page.reload();
     await agenda.locator(".calendar-event summary").filter({ hasText: "ทดสอบปฏิทิน" }).click();
     await expect(agenda).toContainText(hn);
     await expect(page.locator(`.calendar-day[data-date="${date}"]`)).toContainText("ทดสอบปฏิทิน");
-    await page.locator("#calendar-department").selectOption("DT");
+    await page.locator("#calendar-department").selectOption("MS");
     await page.getByRole("button", { name: "แสดง", exact: true }).click();
     await expect(agenda).not.toContainText(hn);
-    await page.locator("#calendar-department").selectOption("GN");
+    await page.locator("#calendar-department").selectOption("SP");
     await page.getByRole("button", { name: "แสดง", exact: true }).click();
     await expect(agenda).toContainText(hn);
     await page.getByRole("link", { name: "เดือนถัดไป", exact: true }).click();
     await page.getByRole("link", { name: "เดือนก่อนหน้า", exact: true }).click();
     await page.locator(`.calendar-day[data-date="${date}"] .calendar-day-number`).click();
     await expect(agenda).toContainText(hn);
-    await page.locator("#booking-hn").fill(hn);
+    await page.getByLabel("เลือกผู้ป่วย", { exact: false }).fill(hn);
+    await page.getByRole("list", { name: "รายชื่อผู้ป่วยสำหรับจอง" }).getByRole("button").filter({ hasText: hn }).click();
+    await expect(page.locator('input[name="hn"]')).toHaveValue(hn);
     await page.locator("#booking-date").fill(date);
     await page.locator("#booking-time").fill("09:30");
-    await page.locator("#booking-department").selectOption("GN");
+    await page.locator("#booking-department").selectOption("SP");
     await page.getByRole("button", { name: "บันทึกการจอง", exact: true }).click();
     await expect(page.locator(".form-error")).toContainText("ผู้ป่วยมีนัดในเวลานี้แล้ว");
     await page.setViewportSize({ width: 390, height: 844 });
@@ -69,7 +77,7 @@ async function main() {
     const record = await getDatabase().query("SELECT to_char(starts_at AT TIME ZONE 'Asia/Bangkok', 'YYYY-MM-DD HH24:MI') AS appointment FROM rom_booking WHERE patient_id = $1", [patientId]);
     expect(record.rows).toHaveLength(1);
     expect(record.rows[0].appointment).toBe(`${date} 09:30`);
-    console.log("PASS: calendar authorization, booking persistence, validation, Thai time, day/month navigation, department filter, duplicate prevention, mobile layout.");
+    console.log("PASS: calendar authorization, booking persistence, validation, Thai time, day/month navigation, department filter, duplicate prevention, patient picker, protected search API, mobile layout.");
   } finally {
     if (patientId) {
       await getDatabase().query("DELETE FROM rom_booking WHERE patient_id = $1", [patientId]);

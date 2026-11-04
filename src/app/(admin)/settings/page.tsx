@@ -2,12 +2,15 @@ import { Building2, ShieldCheck } from "lucide-react";
 import { requireAdmin } from "@/lib/session";
 import { departments } from "@/lib/navigation";
 import { PageHeading } from "@/components/page-ui";
+import { AddAdminForm } from "@/components/add-admin-form";
+import { getDatabase } from "@/lib/db";
 import { PasswordForm } from "@/components/password-form";
 
 export const instant = false;
 export const metadata = { title: "ตั้งค่าระบบ | ROM Clinic" };
 export default async function SettingsPage() {
   const user = await requireAdmin();
+  const admins = await getDatabase().query<{ id: string; name: string; email: string }>("SELECT id, name, email FROM rom_auth_user WHERE role = $1 ORDER BY \"createdAt\", id", ["admin"]);
   return (
     <>
       <PageHeading
@@ -83,6 +86,7 @@ export default async function SettingsPage() {
           </div>
         </section>
       </div>
+      <section className="panel admin-management"><div className="panel-header"><div><h2><ShieldCheck size={19} />จัดการแอดมิน</h2><p>เพิ่มบัญชีผู้ดูแลระบบและดูรายชื่อแอดมิน</p></div></div><div className="admin-management-grid"><div><h3 className="admin-section-title">เพิ่มแอดมิน</h3><AddAdminForm /></div><div className="admin-list"><h3 className="admin-section-title">รายชื่อแอดมิน</h3><ul>{admins.rows.map(admin => <li key={admin.id}><strong>{admin.name}{admin.id === user.id && <span className="badge badge-teal">คุณ</span>}</strong><span>{admin.email}</span></li>)}</ul></div></div></section>
     </>
   );
 }

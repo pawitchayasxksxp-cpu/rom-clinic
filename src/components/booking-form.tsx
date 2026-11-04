@@ -1,7 +1,7 @@
 "use client";
 
 import { startTransition, useActionState } from "react";
-import Link from "next/link";
+import { PatientPicker } from "./patient-picker";
 import { CalendarPlus } from "lucide-react";
 import { createBooking } from "@/app/(admin)/calendar/actions";
 import { departments } from "@/lib/navigation";
@@ -18,7 +18,7 @@ export function BookingForm({ date, bookingKey }: { date: string; bookingKey: st
       <input type="hidden" name="booking-key" value={bookingKey} />
       <fieldset disabled={pending}>
         <div className="field-grid">
-          <div className="field"><label htmlFor="booking-hn">HN ผู้ป่วย <span>*</span></label><input id="booking-hn" name="hn" required maxLength={30} placeholder="เช่น ROM-00000001" /><p className="form-note"><Link href="/registration">ค้นหา HN จากรายชื่อผู้ป่วย</Link></p></div>
+          <PatientPicker />
           <div className="field"><label htmlFor="booking-department">แผนก <span>*</span></label><select id="booking-department" name="department" required defaultValue=""><option value="" disabled>เลือกแผนก</option>{departments.map(item => <option key={item.code} value={item.code}>{item.name}</option>)}</select></div>
           <div className="field"><label htmlFor="booking-date">วันที่นัดหมาย <span>*</span></label><input id="booking-date" name="date" type="date" required defaultValue={date} min="1900-01-01" max="2100-12-31" /></div>
           <div className="field"><label htmlFor="booking-time">เวลานัดหมาย (เวลาไทย) <span>*</span></label><input id="booking-time" name="time" type="time" required /></div>

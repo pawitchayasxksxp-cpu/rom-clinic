@@ -31,3 +31,7 @@ test("booking validation accepts valid future Thai-time appointments", () => {
 test("booking validation rejects invalid date, time, department, key, and payload", () => {
   for (const changes of [{ hn: "" }, { date: "2026-02-30" }, { date: "2000-01-01" }, { time: "24:00" }, { department: "XX" }, { "booking-key": "forged" }, { note: "x".repeat(1001) }, { hn: undefined }]) assert.ok(validateBooking(form(changes)).error);
 });
+
+test("new bookings accept the clinic's current service departments", () => {
+  for (const department of ["GN", "MS", "SP", "TM"]) assert.ok(validateBooking(form({ department })).data);
+});

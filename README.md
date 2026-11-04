@@ -27,30 +27,56 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | Route | Current behavior |
 | --- | --- |
 | `/login` | Working admin email/password login |
-| `/dashboard` | Overview shell, department cards, and queue/statistics placeholders |
-| `/registration` | Searchable, paginated patient directory backed by PostgreSQL |
+| `/dashboard` | Today’s calendar booking statistics and confirmed appointments waiting for service, with department counts |
+| `/registration` | Live search while typing, paginated patient directory backed by PostgreSQL |
+| `/registration/[id]` | Protected read-only patient details, including contact, health data, and vital signs |
 | `/registration/new` | Hospital-style patient registration with validation and persistence |
 | `/calendar` | Full-width month calendar with booking cards in each day, expandable details, department filter, and booking form |
+| `/dispensing` | Patient-linked dispensing entry, live medication label preview, and 20 recent records |
+| `/dispensing/[id]` | Saved medication label with print and reprint support |
 | `/queues` | Queue management scaffold; calling/completing/cancelling is pending |
 | `/history` | Daily history scaffold |
 | `/display` | Waiting room display scaffold, currently admin-only |
-| `/settings` | Admin account details and working password change |
+| `/settings` | Admin account details, password change, protected admin creation, and admin directory |
+
+Run `npm run db:migrate:dispensing` after the patient migration to enable medication
+labels. Staff supply all medication and instruction text. Labels persist with a
+patient name/HN snapshot and creator; printing uses a 100 mm wide label with
+automatic height. Select the printer/paper in the browser print dialog. This feature
+does not prescribe medication or manage inventory.
+
+Administrators can add another admin through Settings. Passwords use Better Auth
+hashing; user and credential records are inserted atomically. Only authenticated
+admins can create accounts. Public signup remains disabled.
 
 Run `npm run db:migrate:bookings` after the patient migration to enable booking
 storage in each environment. Calendar times use Asia/Bangkok. Bookings reference
-registered patients by HN and prevent duplicate appointments for a patient at the
+registered patients selected from a searchable patient picker and prevent duplicate appointments for a patient at the
 same time. Only administrators can view or create bookings. Booking registration
 does not create a queue entry; status management and online self-booking are future work.
 
-Queue CRUD, numbering, urgent/FIFO sorting, statistics, daily rollover, and live
-display updates are future work. Placeholders use `—` rather than invented data.
+Dashboard waiting rows and statistics come from today’s calendar bookings in
+Asia/Bangkok; cancelled/completed appointments are excluded from waiting. It
+refreshes every 30 seconds while visible and on window focus. Creating a booking
+invalidates both calendar and dashboard data.
+
+Queue CRUD, numbering, urgent/FIFO sorting, and live display updates are future work. Placeholders use `—` rather than invented data.
 Patient records are stored in `rom_patient`; queue tables and numbering remain future work.
 
 Run `npm run db:migrate:patients` once before using the directory in each environment.
 This additive migration creates the patient table with RLS and revokes public API
 access. The application checks admin authorization when listing or saving patients.
-Forms validate required fields, dates, phone, department, HN, and postal codes on the
-server. New records receive a unique HN; an existing HN cannot be registered twice.
+Forms validate required fields, dates, phone, department, vital signs, and postal codes on the
+server. New records receive an automatic HN (`HN-000001`, `HN-000002`, …) from a
+database sequence, independently of patient row IDs. Reapply `npm run db:migrate:patients`
+when upgrading to enable this default. Existing HNs are preserved. The server ignores
+client-supplied HNs. Blood pressure (systolic/diastolic, mmHg) and pulse (beats/minute)
+are optional registration measurements stored with the patient and shown in the directory.
+Service category (Walk-in or course purchase) is chosen during registration and can
+be updated directly from the directory; patient details reflect the saved category.
+Directory search runs automatically while typing (300 ms debounce). The booking
+form uses an authenticated patient lookup with name/HN/phone search and explicit
+selection; raw HN entry is no longer needed.
 Repeated submission of the same form is idempotent. Registration does not issue a queue number.
 
 Authentication uses Better Auth with PostgreSQL-backed sessions, password hashing,
@@ -77,6 +103,14 @@ Run `npm run db:migrate` to apply auth schema changes without creating an admin.
 from the installed auth configuration and applies them together with RLS in a
 transaction. Run setup/migrations as an explicit maintenance step, never as part
 of a request or Vercel build. The current Supabase database is already initialized.
+
+## Service departments
+
+Current services: general medicine (`GN`), musculoskeletal massage (`MS`),
+sports massage and rehabilitation (`SP`), and Thai traditional medicine (`TM`).
+After updating existing environments, rerun both `npm run db:migrate:patients`
+and `npm run db:migrate:bookings` to accept the new codes. Historical dental,
+emergency, and pediatric records retain their original labels.
 
 ## Environment and integrations
 
@@ -172,8 +206,8 @@ Patient registration checks (Chrome installed, local `npm run dev` running on po
 npm run test:patients
 ```
 
-This validates inputs and exercises registration, persistence, search, duplicate HN
-rejection, automatic HN generation, and mobile layout with synthetic records. It
+This validates inputs and exercises registration, persistence, search, automatic HN sequencing,
+vital-sign persistence, and mobile layout with synthetic records. It
 removes only the records created by that run. The configured bootstrap admin
 credentials must match the current database password.
 
@@ -183,6 +217,17 @@ patient and booking records:
 ```sh
 npm run test:calendar
 ```
+
+Medication label and admin creation checks (same local server setup):
+
+```sh
+npm run test:dispensing-admin
+npm run test:dashboard
+```
+
+The test creates synthetic patient/admin records, verifies label printing and new
+admin login, and removes only those records. Print screenshots contain synthetic
+data only and are saved in the ignored `test-results` directory.
 
 Browser regression tests (Chrome installed locally):
 

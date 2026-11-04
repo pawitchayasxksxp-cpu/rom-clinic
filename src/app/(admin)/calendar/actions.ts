@@ -26,5 +26,6 @@ export async function createBooking(_state: { error: string }, form: FormData): 
     return { error: "บันทึกการจองไม่สำเร็จ กรุณาลองอีกครั้ง" };
   }
   revalidatePath("/calendar");
+  revalidatePath("/dashboard");
   redirect(`/calendar?date=${data.date}&saved=1`);
 }
