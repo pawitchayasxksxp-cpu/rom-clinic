@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  outputFileTracingIncludes: {
+    "/*": ["./certs/supabase-ca.crt"],
+  },
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,

@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Sans_Thai } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
+
+// Every page verifies a database-backed session before showing private content.
+export const instant = false;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,18 +16,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const thaiFont = Noto_Sans_Thai({
+  variable: "--font-thai",
+  subsets: ["thai", "latin"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "ROM Clinic",
-  description: "ROM Clinic web application",
+  description: "ระบบจัดการคิวและการให้บริการผู้ป่วยคลินิก",
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      lang="th"
+      className={`${geistSans.variable} ${geistMono.variable} ${thaiFont.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body>
+        <a className="skip-link" href="#main-content">
+          ข้ามไปยังเนื้อหา
+        </a>
+        <Suspense
+          fallback={
+            <div className="app-loading" role="status">
+              กำลังเตรียมพื้นที่ทำงาน…
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
+      </body>
     </html>
   );
 }
