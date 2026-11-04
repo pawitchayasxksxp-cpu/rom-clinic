@@ -29,13 +29,14 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | `/login` | Working admin email/password login |
 | `/dashboard` | Today’s calendar booking statistics and confirmed appointments waiting for service, with department counts |
 | `/registration` | Live search while typing, paginated patient directory backed by PostgreSQL |
-| `/registration/[id]` | Protected read-only patient details, including contact, health data, and vital signs |
+| `/registration/[id]` | Protected patient details with an edit action, including contact, health data, and vital signs |
+| `/registration/[id]/edit` | Prefilled patient edit form; saves to the same record and retains the HN |
 | `/registration/new` | Hospital-style patient registration with validation and persistence |
 | `/calendar` | Full-width month calendar with booking cards in each day, expandable details, department filter, and booking form |
 | `/dispensing` | Patient-linked dispensing entry, live medication label preview, and 20 recent records |
 | `/dispensing/[id]` | Saved medication label with print and reprint support |
 | `/queues` | Queue management scaffold; calling/completing/cancelling is pending |
-| `/history` | Daily history scaffold |
+| `/history` | Daily treatment, dispensing, certificate and Body Chart activity |
 | `/display` | Waiting room display scaffold, currently admin-only |
 | `/settings` | Admin account details, password change, protected admin creation, and admin directory |
 
@@ -89,7 +90,7 @@ are Secure in production. Password changes require the current password and revo
 other sessions. There is no email recovery service in this phase.
 
 Set `BETTER_AUTH_SECRET` (a random secret of at least 32 characters),
-`BETTER_AUTH_URL`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` (at least 12 characters) in
+`BETTER_AUTH_URL`, `ADMIN_EMAIL`, and `ADMIN_PASSWORD` (at least 8 characters) in
 the root `.env` before running `npm run setup:admin`. The local checkout already
 has generated credentials in `.env`; read `ADMIN_EMAIL` / `ADMIN_PASSWORD` there.
 Never commit these values. The setup command creates only the prefixed
@@ -204,6 +205,7 @@ Patient registration checks (Chrome installed, local `npm run dev` running on po
 
 ```sh
 npm run test:patients
+npm run test:patient-edit
 ```
 
 This validates inputs and exercises registration, persistence, search, automatic HN sequencing,
@@ -254,3 +256,61 @@ npm run lint
 npm run build
 npm start
 ```
+
+## Clinical records, Body Chart, courses and Master Data
+
+Run these explicit migrations after the existing patient/dispensing/auth migrations:
+
+```sh
+npm run db:migrate:clinical
+npm run db:migrate:courses
+npm run db:migrate:body-chart
+npm run db:migrate:professional
+npm run db:migrate:master-data
+```
+
+Patient rows provide certificate and Body Chart links. Clinical history combines
+per-visit records, dispensing, certificates and Body Charts with pagination.
+Certificates retain the patient identity at creation and provide a blank signature
+line for the examining professional; the application does not sign them.
+Body Chart uses the supplied four-view reference image, with numbered points and
+notes stored per patient. Both document views support printing/PDF.
+
+Master Data has course, admin and medicine tabs, with editing, deletion and optional
+JPG/PNG/WebP photos (5 MB maximum). Uploaded photos use authenticated Cloudinary
+delivery. Course/medicine deletion removes them from current choices while
+retaining prior references. Admin removal revokes access and sessions while
+retaining clinical audit references. The active account and final admin cannot
+be removed. Medicine stock is maintained in Master Data; dispensing does not
+automatically deduct inventory in this version.
+
+Professional profiles include a name, profession, license number and optional
+issue/expiry dates. These are stored profile data, not license verification.
+Password minimum is 8 characters, with visibility toggles on password fields.
+Other choices expose a required notes field; notes persist in patient details and
+medication labels. New patient forms show the current/next HN without reserving it.
+
+Every authenticated page has PDF, Excel and print controls. PDF uses the browser
+print dialog (choose Save as PDF); Excel exports persisted, authorized data and
+never includes passwords, password hashes, sessions or connection secrets.
+Exports cap reports at 10,000 rows and request a narrower filter above that limit.
+The dispensing page can save a label and immediately open the print dialog.
+
+Supplied clinic logo: `public/clinic-logo.jpg`. Body reference: `public/body-chart.png`.
+
+## Uploads and exports
+
+Apply `npm run db:migrate:master-data` after courses/professional/auth migrations.
+Master Data has course/admin/medicine tabs; images are optional and restricted
+to actual JPG/PNG/WebP files up to 5 MB. Existing photos remain when no replacement
+is selected. Admin editing supports optional password reset (8+ characters),
+and email/password changes revoke the affected account's sessions.
+
+Excel export is generated server-side with ExcelJS using explicit column lists.
+Each route maps to its saved data; individual patient export includes separate
+patient, treatment, dispensing, certificate and Body Chart sheets.
+
+Run `npm run test:clinic-workflows` with the local dev server available on port
+3000. The integration test uses synthetic records and a generated small image,
+checks real authenticated uploads, downloads and reads Excel, prints PDFs, and
+removes only its own records and uploaded assets. Test artifacts are ignored.

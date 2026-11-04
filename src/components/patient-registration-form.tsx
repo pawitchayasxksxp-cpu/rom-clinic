@@ -1,11 +1,14 @@
 "use client";
 
-import { startTransition, useActionState } from "react";
+import { createContext, startTransition, useActionState, useContext, useState } from "react";
 import Link from "next/link";
-import { registerPatient } from "@/app/(admin)/registration/actions";
-import { ClipboardPlus } from "lucide-react";
+import { registerPatient, updatePatient } from "@/app/(admin)/registration/actions";
+import { ClipboardPlus, Save } from "lucide-react";
+import type { Course } from "@/lib/courses";
 import { patientServices } from "@/lib/patient-service";
-import { departments } from "@/lib/navigation";
+import { departments, departmentName } from "@/lib/navigation";
+
+const PatientValues = createContext<Record<string, string>>({});
 
 type FieldProps = {
   id: string;
@@ -21,17 +24,20 @@ type FieldProps = {
 };
 
 function Field({ id, label, required, type = "text", placeholder, options, autoComplete, maxLength, min, max }: FieldProps) {
+  const values = useContext(PatientValues);
+  const [choice, setChoice] = useState(values[id] || "");
   return (
     <div className="field">
       <label htmlFor={id}>{label}{required && <span> *</span>}</label>
       {options ? (
-        <select id={id} name={id} required={required} defaultValue="">
+        <select id={id} name={id} required={required} value={choice} onChange={event => setChoice(event.target.value)}>
           <option value="" disabled>เลือก{label}</option>
           {options.map(option => <option key={option} value={option}>{option}</option>)}
         </select>
       ) : (
-        <input id={id} name={id} type={type} min={type === "date" ? "1850-01-01" : min} max={max} step={type === "number" ? 1 : undefined} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
+        <input id={id} name={id} defaultValue={values[id] || ""} type={type} min={type === "date" ? "1850-01-01" : min} max={max} step={type === "number" ? 1 : undefined} placeholder={placeholder} required={required} autoComplete={autoComplete} maxLength={maxLength} />
       )}
+      {options && choice.includes("อื่น") && <div className="other-choice-note"><label htmlFor={`${id}-other`}>หมายเหตุ / ระบุ{label}อื่น ๆ <span>*</span></label><input id={`${id}-other`} name={`${id}-other`} required maxLength={500} defaultValue={values[`${id}-other`] || ""} placeholder="ระบุรายละเอียดเพิ่มเติม" /></div>}
     </div>
   );
 }
@@ -50,22 +56,28 @@ function AddressFields({ prefix }: { prefix: string }) {
   );
 }
 
-export function PatientRegistrationForm({ registrationKey }: { registrationKey: string }) {
-  const [state, action, pending] = useActionState(registerPatient, { error: "" });
+export function PatientRegistrationForm({ registrationKey, patient, courses = [], hnPreview }: { hnPreview?: { next: string; latest: string | null }; courses?: Course[]; registrationKey?: string; patient?: { id: string; hn: string; values: Record<string, string> } }) {
+  const values = patient?.values || {};
+  const [serviceType, setServiceType] = useState(values["service-type"] || "walk-in");
+  const [state, action, pending] = useActionState(async (previous: { error: string }, form: FormData) => {
+    return patient ? updatePatient(patient.id, previous, form) : registerPatient(previous, form);
+  }, { error: "" });
   return (
+    <PatientValues.Provider value={values}>
     <form onSubmit={(event) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
       startTransition(() => action(data));
     }} className="registration-form hospital-registration" aria-describedby="registration-status" aria-busy={pending}>
-      <input type="hidden" name="registration-key" value={registrationKey} />
+      {registrationKey && <input type="hidden" name="registration-key" value={registrationKey} />}
       <p className="registration-intro">แบบฟอร์มทะเบียนผู้ป่วย <span>* ข้อมูลจำเป็น</span></p>
       <fieldset disabled={pending}>
         <legend><span>01</span> ข้อมูลส่วนตัวผู้ป่วย</legend>
         <div className="field-grid">
           <Field id="patient-type" label="ประเภทผู้ป่วย" required options={["ผู้ป่วยใหม่", "ผู้ป่วยเดิม"]} />
-          <div className="field"><label htmlFor="hn">เลขประจำตัวผู้ป่วย (HN)</label><input id="hn" readOnly value="ระบบสร้างให้อัตโนมัติหลังบันทึก" aria-describedby="hn-help" /><p id="hn-help" className="form-note">รูปแบบ HN-000001, HN-000002 ต่อเนื่องอัตโนมัติ</p></div>
-          <div className="field"><label htmlFor="service-type">ประเภทบริการ <span>*</span></label><select id="service-type" name="service-type" required defaultValue="walk-in">{patientServices.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
+          <div className="field"><label htmlFor="hn">เลขประจำตัวผู้ป่วย (HN)</label><input id="hn" readOnly value={patient?.hn || hnPreview?.next || "ระบบสร้างให้อัตโนมัติหลังบันทึก"} aria-describedby="hn-help" /><p id="hn-help" className="form-note">{patient ? "HN ประจำตัวผู้ป่วย" : `เลขถัดไป ณ เวลาเปิดหน้า · เลขล่าสุดที่ออก: ${hnPreview?.latest || "ยังไม่มี"}`}</p></div>
+          <div className="field"><label htmlFor="service-type">ประเภทบริการ <span>*</span></label><select id="service-type" name="service-type" required value={serviceType} onChange={event => setServiceType(event.target.value)}>{patientServices.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}</select></div>
+          <div className="field"><label htmlFor="course-id">คอร์ส (กรณีซื้อคอร์ส)</label><select id="course-id" name="course-id" disabled={serviceType !== "course"} defaultValue={values["course-id"] || ""}><option value="">เลือกคอร์ส</option>{courses.map(course => <option key={course.id} value={course.id}>{course.name} · ฿{new Intl.NumberFormat("th-TH").format(Number(course.price))}{course.archived ? " (คอร์สเดิมที่ลบแล้ว)" : ""}</option>)}</select></div>
           <Field id="identity-type" label="ประเภทเอกสารยืนยันตัวตน" options={["บัตรประชาชน", "หนังสือเดินทาง", "เอกสารอื่น / ไม่มีเอกสาร"]} />
           <Field id="identity-number" label="เลขที่เอกสารยืนยันตัวตน" placeholder="เลขบัตรประชาชน หรือหนังสือเดินทาง" maxLength={30} />
           <Field id="title" label="คำนำหน้าชื่อ" options={["นาย", "นาง", "นางสาว", "เด็กชาย", "เด็กหญิง", "อื่น ๆ"]} />
@@ -113,7 +125,7 @@ export function PatientRegistrationForm({ registrationKey }: { registrationKey: 
         </div>
         <div className="field">
           <label htmlFor="allergy-details">สิ่งที่แพ้และอาการแพ้</label>
-          <textarea id="allergy-details" name="allergy-details" rows={2} placeholder="ชื่อยา / อาหาร และอาการที่เคยเกิดขึ้น" />
+          <textarea id="allergy-details" name="allergy-details" defaultValue={values["allergy-details"] || ""} rows={2} placeholder="ชื่อยา / อาหาร และอาการที่เคยเกิดขึ้น" />
         </div>
         <h3 className="registration-subheading">สัญญาณชีพ</h3>
         <div className="field-grid">
@@ -124,31 +136,33 @@ export function PatientRegistrationForm({ registrationKey }: { registrationKey: 
         <Field id="conditions" label="โรคประจำตัว / ยาที่ใช้ประจำ" placeholder="ระบุตามข้อมูลที่ผู้ป่วยแจ้ง" />
         <div className="field">
           <label htmlFor="department">แผนกที่เข้ารับบริการ <span>*</span></label>
-          <select id="department" name="department" required defaultValue="">
+          <select id="department" name="department" required defaultValue={values.department || ""}>
             <option value="" disabled>เลือกแผนก</option>
+            {patient && values.department && !departments.some(item => item.code === values.department) && <option value={values.department}>{departmentName(values.department)} (แผนกเดิม)</option>}
             {departments.map(department => <option key={department.code} value={department.code}>{department.name}</option>)}
           </select>
         </div>
         <div className="field">
           <label htmlFor="symptoms">อาการสำคัญ / เหตุผลที่มารับบริการ</label>
-          <textarea id="symptoms" name="symptoms" rows={3} placeholder="ระบุอาการและระยะเวลาที่เป็น" />
+          <textarea id="symptoms" name="symptoms" defaultValue={values.symptoms || ""} rows={3} placeholder="ระบุอาการและระยะเวลาที่เป็น" />
         </div>
         <fieldset className="registration-priority">
           <legend>ระดับความเร่งด่วน</legend>
           <div className="priority-options">
-            <label><input type="radio" name="priority" value="normal" defaultChecked /><span><strong>ปกติ</strong><small>เรียงตามเวลาที่ลงทะเบียน</small></span></label>
-            <label><input type="radio" name="priority" value="urgent" /><span><strong>ด่วน</strong><small>เจ้าหน้าที่ระบุตามผลคัดกรอง</small></span></label>
+            <label><input type="radio" name="priority" value="normal" defaultChecked={values.priority !== "urgent"} /><span><strong>ปกติ</strong><small>เรียงตามเวลาที่ลงทะเบียน</small></span></label>
+            <label><input type="radio" name="priority" value="urgent" defaultChecked={values.priority === "urgent"} /><span><strong>ด่วน</strong><small>เจ้าหน้าที่ระบุตามผลคัดกรอง</small></span></label>
           </div>
         </fieldset>
       </fieldset>
       <div className="registration-actions">
-        <p id="registration-status">บันทึกข้อมูลเข้ารายชื่อผู้ป่วย การออกหมายเลขคิวจะเปิดใช้งานในขั้นตอนถัดไป</p>
+        <p id="registration-status">{patient ? "แก้ไขข้อมูลผู้ป่วยและตรวจสอบก่อนบันทึก" : "บันทึกข้อมูลเข้ารายชื่อผู้ป่วย การออกหมายเลขคิวจะเปิดใช้งานในขั้นตอนถัดไป"}</p>
         {state.error && <p className="form-error" role="alert">{state.error}</p>}
         <div className="registration-action-buttons">
-          <button className="button button-primary" type="submit" disabled={pending}><ClipboardPlus size={18} />{pending ? "กำลังบันทึก…" : "บันทึกผู้ป่วย"}</button>
-          <Link href="/registration" className="button button-secondary">ยกเลิก</Link>
+          <button className="button button-primary" type="submit" disabled={pending}>{patient ? <Save size={18} /> : <ClipboardPlus size={18} />}{pending ? "กำลังบันทึก…" : patient ? "บันทึกการแก้ไข" : "บันทึกผู้ป่วย"}</button>
+          <Link href={patient ? `/registration/${patient.id}` : "/registration"} className="button button-secondary">ยกเลิก</Link>
         </div>
       </div>
     </form>
+    </PatientValues.Provider>
   );
 }

@@ -37,7 +37,7 @@ export function createAuth({ allowSignUp = false } = {}) {
       enabled: true,
       disableSignUp: !allowSignUp,
       autoSignIn: false,
-      minPasswordLength: 12,
+      minPasswordLength: 8,
       maxPasswordLength: 128,
     },
     user: {

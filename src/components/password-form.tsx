@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { LockKeyhole } from "lucide-react";
+import { PasswordInput } from "./password-input";
 import { authClient } from "@/lib/auth-client";
 
 export function PasswordForm() {
@@ -43,8 +44,9 @@ export function PasswordForm() {
     <form className="password-form" onSubmit={submit}>
       <div className="field">
         <label htmlFor="current-password">รหัสผ่านปัจจุบัน</label>
-        <input
+        <PasswordInput
           id="current-password"
+          toggleLabel="รหัสผ่านปัจจุบัน"
           name="currentPassword"
           type="password"
           autoComplete="current-password"
@@ -56,33 +58,35 @@ export function PasswordForm() {
       <div className="field-grid">
         <div className="field">
           <label htmlFor="new-password">รหัสผ่านใหม่</label>
-          <input
+          <PasswordInput
             id="new-password"
+            toggleLabel="รหัสผ่านใหม่"
             name="newPassword"
             type="password"
             autoComplete="new-password"
             required
-            minLength={12}
+            minLength={8}
             maxLength={128}
             disabled={pending}
           />
         </div>
         <div className="field">
           <label htmlFor="confirm-password">ยืนยันรหัสผ่านใหม่</label>
-          <input
+          <PasswordInput
             id="confirm-password"
+            toggleLabel="ยืนยันรหัสผ่านใหม่"
             name="confirmPassword"
             type="password"
             autoComplete="new-password"
             required
-            minLength={12}
+            minLength={8}
             maxLength={128}
             disabled={pending}
           />
         </div>
       </div>
       <p className="form-note">
-        ใช้อย่างน้อย 12 ตัวอักษร เมื่อเปลี่ยนแล้ว
+        ใช้อย่างน้อย 8 ตัวอักษร เมื่อเปลี่ยนแล้ว
         อุปกรณ์อื่นจะต้องเข้าสู่ระบบอีกครั้ง
       </p>
       {message && (

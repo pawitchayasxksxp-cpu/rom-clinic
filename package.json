@@ -18,13 +18,21 @@
     "test:calendar": "node --import tsx --test tests/unit/calendar.test.ts && node --conditions=react-server --import tsx scripts/test-calendar.ts",
     "db:migrate:dispensing": "node --conditions=react-server --import tsx scripts/migrate-dispensing.ts",
     "test:dispensing-admin": "node --import tsx --test tests/unit/dispensing-validation.test.ts && node --conditions=react-server --import tsx scripts/test-dispensing-admin.ts",
-    "test:dashboard": "node --conditions=react-server --import tsx scripts/test-dashboard-bookings.ts"
+    "test:dashboard": "node --conditions=react-server --import tsx scripts/test-dashboard-bookings.ts",
+    "test:patient-edit": "node --import tsx --test tests/unit/patient-validation.test.ts && node --conditions=react-server --import tsx scripts/test-patient-edit.ts",
+    "db:migrate:clinical": "node --conditions=react-server --import tsx scripts/migrate-clinical.ts",
+    "db:migrate:courses": "node --conditions=react-server --import tsx scripts/migrate-courses.ts",
+    "db:migrate:body-chart": "node --conditions=react-server --import tsx scripts/migrate-body-chart.ts",
+    "db:migrate:professional": "node --conditions=react-server --import tsx scripts/migrate-professional.ts",
+    "db:migrate:master-data": "node --conditions=react-server --import tsx scripts/migrate-master-data.ts",
+    "test:clinic-workflows": "node --import tsx --test tests/unit/*.test.ts && node --conditions=react-server --import tsx scripts/test-clinic-workflows.ts"
   },
   "dependencies": {
     "@next/env": "^16.4.5",
     "@vercel/functions": "^3.10.6",
     "better-auth": "^1.7.16",
     "cloudinary": "^2.11.0",
+    "exceljs": "^4.4.0",
     "lucide-react": "^1.67.0",
     "next": "16.4.5",
     "pg": "^8.23.1",
@@ -33,6 +41,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^1.1.0",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@types/node": "^20",
@@ -41,6 +50,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.5",
+    "pdfjs-dist": "^6.5.438",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

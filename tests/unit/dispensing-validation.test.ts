@@ -5,7 +5,7 @@ import { emptyDrugLabel, validateDispensing } from "../../src/lib/dispensing-val
 
 function form(changes: Record<string, string | undefined> = {}) {
   const form = new FormData();
-  for (const [key, value] of Object.entries({ ...emptyDrugLabel, "drug-name": " ยาทดสอบ ", quantity: "2", unit: "หน่วยทดสอบ", directions: "ข้อความทดสอบ", dispenser: "เจ้าหน้าที่ทดสอบ", hn: "HN-000001", "dispensing-key": randomUUID(), ...changes })) if (value !== undefined) form.set(key, value);
+  for (const [key, value] of Object.entries({ ...emptyDrugLabel, "drug-name": " ยาทดสอบ ", strength: "ยาเม็ด", quantity: "2", unit: "เม็ด", directions: "ข้อความทดสอบ", dispenser: "เจ้าหน้าที่ทดสอบ", hn: "HN-000001", "dispensing-key": randomUUID(), ...changes })) if (value !== undefined) form.set(key, value);
   return form;
 }
 
@@ -23,4 +23,10 @@ test("rejects invalid quantities, dates, overlong label text, and files", () => 
   const data = form();
   data.set("drug-name", new Blob(["invalid"]));
   assert.ok(validateDispensing(data).error);
+});
+
+test("accepts dropdown values and rejects arbitrary form and unit values", () => {
+  assert.ok(validateDispensing(form({ strength: "ยาแคปซูล", unit: "แคปซูล" })).data);
+  assert.ok(validateDispensing(form({ strength: "ยาต้ม", unit: "ถุง" })).data);
+  for (const changes of [{ strength: "" }, { strength: "invalid" }, { unit: "invalid" }]) assert.ok(validateDispensing(form(changes)).error);
 });

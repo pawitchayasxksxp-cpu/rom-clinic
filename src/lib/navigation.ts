@@ -6,6 +6,7 @@ export const navigation = [
   { href: "/queues", label: "จัดการคิว", icon: "queues" },
   { href: "/history", label: "ประวัติประจำวัน", icon: "history" },
   { href: "/display", label: "จอแสดงคิว", icon: "display" },
+  { href: "/master-data", label: "Master Data", icon: "master" },
   { href: "/settings", label: "ตั้งค่าระบบ", icon: "settings" },
 ] as const;
 export const departments = [

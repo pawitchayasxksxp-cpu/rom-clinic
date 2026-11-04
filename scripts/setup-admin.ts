@@ -46,7 +46,7 @@ async function main() {
     if (process.argv.includes("--migrate-only")) return;
     const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
     const password = process.env.ADMIN_PASSWORD;
-    if (!email || !password || password.length < 12)
+    if (!email || !password || password.length < 8)
       throw new Error("Missing admin setup credentials.");
     const existing = await db.query<{ role: string }>(
       'SELECT role FROM "rom_auth_user" WHERE email = $1',

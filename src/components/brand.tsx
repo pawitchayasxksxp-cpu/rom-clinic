@@ -1,10 +1,8 @@
-import { HeartPulse } from "lucide-react";
+import { ClinicLogo } from "./clinic-logo";
 export function Brand({ light = false }: { light?: boolean }) {
   return (
     <div className={`brand ${light ? "brand-light" : ""}`}>
-      <span className="brand-symbol">
-        <HeartPulse size={25} strokeWidth={1.8} aria-hidden="true" />
-      </span>
+      <ClinicLogo />
       <span>
         <strong>
           ROM<span>Clinic</span>

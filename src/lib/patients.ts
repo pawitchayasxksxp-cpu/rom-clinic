@@ -14,21 +14,24 @@ export type PatientSummary = {
   bp_diastolic: string | null;
   pulse: string | null;
   service_type: string | null;
+  course_id: string | null;
+  course_name: string | null;
+  course_price: string | null;
 };
 
 export async function listPatients(search: string, page: number) {
   await requireAdmin();
   const pattern = `%${search.replace(/[\\%_]/g, "\\$&")}%`;
   const result = await getDatabase().query<PatientSummary>(
-    `SELECT id::text, COALESCE(hn, 'ROM-' || lpad(id::text, 8, '0')) AS hn,
-      first_name, last_name, phone, department,
-      details->>'service-type' AS service_type,
-      details->>'bp-systolic' AS bp_systolic, details->>'bp-diastolic' AS bp_diastolic, details->>'pulse' AS pulse,
-      to_char(created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
-     FROM rom_patient
-     WHERE $1 = '' OR concat_ws(' ', hn, first_name, last_name, phone,
-       'ROM-' || lpad(id::text, 8, '0')) ILIKE $2
-     ORDER BY created_at DESC, id DESC LIMIT 21 OFFSET $3`,
+    `SELECT p.id::text, COALESCE(p.hn, 'ROM-' || lpad(p.id::text, 8, '0')) AS hn,
+      p.first_name, p.last_name, p.phone, p.department,
+      p.details->>'service-type' AS service_type, p.course_id::text, c.name AS course_name, c.price::text AS course_price,
+      p.details->>'bp-systolic' AS bp_systolic, p.details->>'bp-diastolic' AS bp_diastolic, p.details->>'pulse' AS pulse,
+      to_char(p.created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
+     FROM rom_patient p LEFT JOIN rom_course c ON c.id = p.course_id
+     WHERE $1 = '' OR concat_ws(' ', p.hn, p.first_name, p.last_name, p.phone,
+       'ROM-' || lpad(p.id::text, 8, '0')) ILIKE $2
+     ORDER BY p.created_at DESC, p.id DESC LIMIT 21 OFFSET $3`,
     [search, pattern, (page - 1) * 20],
   );
   return { patients: result.rows.slice(0, 20), hasNext: result.rows.length > 20 };
@@ -43,6 +46,7 @@ export type PatientDetail = {
   phone: string;
   department: string;
   registered_date: string;
+  course_id: string | null;
   details: Record<string, unknown>;
 };
 
@@ -52,7 +56,7 @@ export async function getPatient(id: string): Promise<PatientDetail | null> {
   const result = await getDatabase().query<PatientDetail>(
     `SELECT id::text, COALESCE(hn, 'ROM-' || lpad(id::text, 8, '0')) AS hn,
       first_name, last_name, to_char(birth_date, 'YYYY-MM-DD') AS birth_date,
-      phone, department, details,
+      phone, department, details, course_id::text,
       to_char(created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
      FROM rom_patient WHERE id = $1`,
     [id],
@@ -75,4 +79,14 @@ export async function searchPatientChoices(search: string) {
     [search, pattern],
   );
   return { patients: result.rows.slice(0, 20), hasMore: result.rows.length > 20 };
+}
+
+export async function patientHnPreview() {
+  await requireAdmin();
+  const result = await getDatabase().query<{ next: string; latest: string | null }>(
+    `SELECT 'HN-' || lpad(next_number::text, greatest(6, length(next_number::text)), '0') AS next,
+      CASE WHEN is_called THEN 'HN-' || lpad(last_value::text, greatest(6, length(last_value::text)), '0') ELSE NULL END AS latest
+     FROM (SELECT last_value, is_called, CASE WHEN is_called THEN last_value + 1 ELSE last_value END AS next_number FROM rom_patient_hn_seq) AS numbering`,
+  );
+  return result.rows[0];
 }

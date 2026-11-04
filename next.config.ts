@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     "/*": ["./certs/supabase-ca.crt"],
   },
   /* config options here */
+  experimental: { serverActions: { bodySizeLimit: "8mb" } },
   cacheComponents: true,
   partialPrefetching: true,
   turbopack: {

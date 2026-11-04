@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, HeartPulse, UserRound } from "lucide-react";
+import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound } from "lucide-react";
 import { requireAdmin } from "@/lib/session";
 import { getPatient } from "@/lib/patients";
+import { getCourse } from "@/lib/courses";
+import { patientFieldDisplay } from "@/lib/patient-field-display";
 import { patientServiceLabel } from "@/lib/patient-service";
 import { departmentName } from "@/lib/navigation";
+import { PatientClinicalHistory } from "@/components/patient-clinical-history";
 import { PageHeading } from "@/components/page-ui";
 
 export const instant = false;
@@ -21,18 +24,20 @@ function DetailSection({ title, items }: { title: string; items: readonly Item[]
 
 export default async function PatientDetailPage({ params, searchParams }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; saved?: string; "history-page"?: string; "treatment-saved"?: string }>;
 }) {
   await requireAdmin();
   const { id } = await params;
   const patient = await getPatient(id);
   if (!patient) notFound();
+  const course = patient.course_id ? await getCourse(patient.course_id) : null;
   const query = await searchParams;
   const backParams = new URLSearchParams();
   if (typeof query.q === "string" && query.q) backParams.set("q", query.q.slice(0, 100));
   if (typeof query.page === "string" && /^[1-9]\d{0,5}$/.test(query.page)) backParams.set("page", query.page);
+  const historyPage = Math.min(100000, Math.max(1, Number.parseInt(query["history-page"] || "1", 10) || 1));
   const backUrl = `/registration${backParams.size ? `?${backParams}` : ""}`;
-  const value = (key: string) => typeof patient.details?.[key] === "string" ? (patient.details[key] as string) : "";
+  const value = (key: string) => patientFieldDisplay(patient.details, key);
   const department = departmentName(patient.department);
   const birthDate = new Intl.DateTimeFormat("th-TH", { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${patient.birth_date}T00:00:00Z`));
   const address = (prefix: string): Item[] => [
@@ -45,8 +50,9 @@ export default async function PatientDetailPage({ params, searchParams }: {
   const bp = value("bp-systolic") && value("bp-diastolic") ? `${value("bp-systolic")}/${value("bp-diastolic")}` : "—";
   return <>
     <PageHeading eyebrow="PATIENT DETAILS" title="รายละเอียดผู้ป่วย" description={`HN ${patient.hn} · ลงทะเบียน ${patient.registered_date}`}>
-      <Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link>
+      <div className="registration-action-buttons"><Link href={`/registration/${id}/body-chart`} className="button button-secondary"><Accessibility size={18} />Body Chart</Link><Link href={`/registration/${id}/certificates/new`} className="button button-secondary"><FilePlus2 size={18} />ออกใบรับรองแพทย์</Link><Link href={`/registration/${id}/edit`} className="button button-primary"><Pencil size={18} />แก้ไขข้อมูล</Link><Link href={backUrl} className="button button-secondary"><ArrowLeft size={18} />กลับรายชื่อผู้ป่วย</Link></div>
     </PageHeading>
+    {query.saved === "1" && <p role="status" className="form-feedback">บันทึกการแก้ไขข้อมูลผู้ป่วยเรียบร้อยแล้ว</p>}
     <section className="panel patient-profile" aria-label="ข้อมูลสรุปผู้ป่วย">
       <div className="patient-profile-name"><span className="empty-icon"><UserRound size={28} /></span><div><h2>{value("title")} {patient.first_name} {patient.last_name}</h2><p>{patient.hn} · แผนก{department}</p></div></div>
       <dl className="patient-vitals">
@@ -55,9 +61,12 @@ export default async function PatientDetailPage({ params, searchParams }: {
         <div><dt>หมู่เลือด</dt><dd>{value("blood-group") || "—"}</dd></div>
       </dl>
     </section>
+    {query["treatment-saved"] === "1" && <p role="status" className="form-feedback">บันทึกประวัติการรักษาเรียบร้อยแล้ว</p>}
+    <PatientClinicalHistory patientId={id} page={historyPage} query={backParams.toString()} />
     <div className="patient-detail-grid">
       <DetailSection title="ข้อมูลส่วนตัวและการติดต่อ" items={[
         ["เลขประจำตัวผู้ป่วย (HN)", patient.hn], ["ประเภทผู้ป่วย", value("patient-type")], ["ประเภทบริการ", patientServiceLabel(value("service-type"))],
+        ["คอร์ส", course ? `${course.name}${course.archived ? " (คอร์สที่ลบแล้ว)" : ""}` : ""], ["ราคาคอร์ส", course ? new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB" }).format(Number(course.price)) : ""],
         ["ชื่อ–นามสกุล", `${patient.first_name} ${patient.last_name}`], ["คำนำหน้าชื่อ", value("title")],
         ["ประเภทเอกสารยืนยันตัวตน", value("identity-type")], ["เลขที่เอกสาร", value("identity-number")],
         ["วันเดือนปีเกิด", birthDate], ["เพศ", value("sex")], ["สัญชาติ", value("nationality")],

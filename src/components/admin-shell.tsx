@@ -11,6 +11,7 @@ import {
   History,
   LayoutDashboard,
   ListOrdered,
+  Database,
   LogOut,
   Menu,
   Monitor,
@@ -19,6 +20,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
+import { ExportActions } from "./export-actions";
 import { Brand } from "./brand";
 import { authClient } from "@/lib/auth-client";
 import { navigation } from "@/lib/navigation";
@@ -32,6 +34,7 @@ const icons = {
   history: History,
   display: Monitor,
   settings: Settings2,
+  master: Database,
 };
 export function AdminShell({
   user,
@@ -173,6 +176,7 @@ export function AdminShell({
           </p>
         )}
         <main className="page-content" id="main-content">
+          <ExportActions />
           {children}
         </main>
         <footer className="app-footer">

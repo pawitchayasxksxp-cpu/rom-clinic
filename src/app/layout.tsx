@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   title: "ROM Clinic",
   description: "ระบบจัดการคิวและการให้บริการผู้ป่วยคลินิก",
   robots: { index: false, follow: false },
+  icons: { icon: "/clinic-logo.jpg", apple: "/clinic-logo.jpg" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

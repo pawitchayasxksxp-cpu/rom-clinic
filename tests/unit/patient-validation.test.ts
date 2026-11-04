@@ -46,3 +46,9 @@ test("accepts current clinic service departments", () => {
   for (const department of ["GN", "MS", "SP", "TM"]) assert.ok(validatePatient(form({ department })).data);
   for (const department of ["DT", "ER", "PD"]) assert.ok(validatePatient(form({ department })).error);
 });
+
+test("editing preserves an existing legacy department without allowing other legacy choices", () => {
+  assert.ok(validatePatient(form({ department: "DT" }), { legacyDepartment: "DT" }).data);
+  assert.ok(validatePatient(form({ department: "ER" }), { legacyDepartment: "DT" }).error);
+  assert.ok(validatePatient(form({ department: "TM" }), { legacyDepartment: "DT" }).data);
+});
