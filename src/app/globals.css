@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f8fa;
-  --foreground: #243c45;
-  --teal: #087f80;
-  --muted: #7d8e95;
-  --line: #e9eef0;
+  --background: #f3f7f4;
+  --foreground: #203d30;
+  --teal: #14532d;
+  --muted: #63796b;
+  --line: #e2ebe5;
 }
 @theme inline {
   --color-background: var(--background);
@@ -21,7 +21,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-thai), var(--font-geist-sans), sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 a {
@@ -64,7 +65,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #58bfc1;
+  outline: 3px solid #4f9d69;
   outline-offset: 3px;
 }
 h1,
@@ -105,9 +106,9 @@ svg {
 .brand strong {
   display: block;
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 24px;
+  font-size: 1.6875rem;
   letter-spacing: -0.8px;
-  color: #25424b;
+  color: #203d30;
   line-height: 1.25;
   font-weight: 750;
 }
@@ -119,7 +120,7 @@ svg {
   display: block;
   font-family: var(--font-geist-sans), sans-serif;
   letter-spacing: 1.45px;
-  font-size: 7.4px;
+  font-size: 0.8125rem;
   color: #8a9a9f;
   margin-top: 5px;
 }
@@ -138,7 +139,7 @@ svg {
   font-family: var(--font-geist-sans), sans-serif;
   display: block;
   color: var(--teal);
-  font-size: 10px;
+  font-size: 0.8125rem;
   font-weight: 650;
   letter-spacing: 1.8px;
 }
@@ -147,7 +148,7 @@ svg {
   align-items: center;
   gap: 8px;
   color: #b8e5dc;
-  font-size: 10px;
+  font-size: 0.8125rem;
 }
 .status-dot {
   width: 6px;
@@ -166,7 +167,7 @@ svg {
   padding: 10px 18px;
   border: 1px solid transparent;
   border-radius: 8px;
-  font-size: 12px;
+  font-size: 0.9375rem;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -176,7 +177,7 @@ svg {
   box-shadow: 0 3px 6px #087f8014;
 }
 .button-primary:hover:not(:disabled) {
-  background: #066a6b;
+  background: #0c3b20;
 }
 .button-secondary {
   color: var(--teal);
@@ -209,7 +210,7 @@ svg {
   background: white;
 }
 .login-story {
-  background: #075f60;
+  background: #103d27;
   padding: 42px 54px 27px;
   color: white;
   position: relative;
@@ -236,7 +237,7 @@ svg {
   position: relative;
 }
 .login-story h1 {
-  font-size: clamp(28px, 3vw, 43px);
+  font-size: clamp(2rem, 3.3vw, 3rem);
   letter-spacing: -0.9px;
   line-height: 1.65;
   font-weight: 600;
@@ -246,7 +247,7 @@ svg {
   color: #a5e3ce;
 }
 .login-story-content > p {
-  font-size: 13px;
+  font-size: 1rem;
   line-height: 1.95;
   color: #b5d5d3;
 }
@@ -295,7 +296,7 @@ svg {
   gap: 9px;
   background: #fff;
   box-shadow: 0 9px 20px #003d4a1c;
-  font-size: 11px;
+  font-size: 0.9375rem;
   padding: 13px 16px;
   position: absolute;
   border-radius: 11px;
@@ -329,14 +330,14 @@ svg {
   display: flex;
   justify-content: space-between;
   gap: 15px;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #9dc3c1;
   padding-top: 26px;
   position: relative;
 }
 .login-story-footer span:last-child {
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 8px;
+  font-size: 0.8125rem;
   letter-spacing: 0.8px;
 }
 .login-panel {
@@ -350,7 +351,7 @@ svg {
 }
 .login-card {
   width: 100%;
-  max-width: 355px;
+  max-width: 400px;
 }
 .login-security-icon {
   display: grid;
@@ -359,18 +360,18 @@ svg {
   height: 54px;
   background: #eef7f5;
   border: 1px solid #e3efec;
-  color: #168181;
+  color: #166534;
   border-radius: 16px;
   margin-bottom: 28px;
 }
 .login-card h2 {
-  font-size: 28px;
+  font-size: 1.9375rem;
   letter-spacing: -0.7px;
   font-weight: 650;
   margin-top: 13px;
 }
 .login-description {
-  font-size: 13px;
+  font-size: 1rem;
   color: #8a969c;
   margin-top: 8px;
 }
@@ -379,7 +380,7 @@ svg {
 }
 .login-form > label {
   display: block;
-  font-size: 12px;
+  font-size: 0.9375rem;
   font-weight: 550;
   margin: 20px 0 9px;
 }
@@ -402,14 +403,14 @@ svg {
   border-radius: 8px;
   background: #fff;
   color: #30464d;
-  font-size: 12px;
+  font-size: 0.9375rem;
 }
 input::placeholder,
 textarea::placeholder {
   color: #9fadb3;
 }
 .input-icon input:focus {
-  border-color: #419f9e;
+  border-color: #4f9d69;
 }
 .password-toggle {
   position: absolute;
@@ -424,7 +425,7 @@ textarea::placeholder {
 }
 .form-note {
   color: #8c999f;
-  font-size: 10px;
+  font-size: 0.8125rem;
   line-height: 1.8;
   margin-top: 12px;
 }
@@ -434,7 +435,7 @@ textarea::placeholder {
   min-height: 48px;
   justify-content: space-between;
   padding: 12px 19px;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .login-help {
   border-top: 1px solid #edf0f1;
@@ -443,7 +444,7 @@ textarea::placeholder {
   justify-content: center;
   gap: 7px;
   color: #97a4aa;
-  font-size: 10px;
+  font-size: 0.8125rem;
   padding-top: 22px;
   margin-top: 29px;
 }
@@ -451,7 +452,7 @@ textarea::placeholder {
   position: absolute;
   bottom: 27px;
   text-align: center;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #9aa7ac;
 }
 .login-panel-footer span {
@@ -466,7 +467,7 @@ textarea::placeholder {
   border: 1px solid #f6d9d6;
   border-radius: 8px;
   padding: 11px 13px;
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #b3524a;
   margin-top: 15px;
   line-height: 1.7;
@@ -508,7 +509,7 @@ textarea::placeholder {
   border: 1px solid #edf1f3;
   border-radius: 9px;
   padding: 11px;
-  font-size: 11px;
+  font-size: 0.9375rem;
   font-weight: 600;
 }
 .workspace-label > svg {
@@ -517,7 +518,7 @@ textarea::placeholder {
 }
 .workspace-label small {
   display: block;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #94a0a6;
   font-weight: 400;
   margin-top: 3px;
@@ -531,11 +532,11 @@ textarea::placeholder {
   background: #e3efed;
   color: #428781;
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
 }
 .nav-caption {
   color: #a0aeb4;
-  font-size: 10px;
+  font-size: 0.8125rem;
   margin: 0 13px 10px;
 }
 .nav-item {
@@ -545,16 +546,16 @@ textarea::placeholder {
   padding: 13px 14px;
   border-radius: 8px;
   color: #7b8b94;
-  font-size: 12px;
+  font-size: 0.9375rem;
   margin-bottom: 5px;
 }
 .nav-item:hover {
   background: #f5f9f9;
-  color: #228582;
+  color: #166534;
 }
 .nav-item.active {
   background: #eaf5f2;
-  color: #0b817d;
+  color: #14532d;
   font-weight: 600;
 }
 .nav-active-dot {
@@ -562,7 +563,7 @@ textarea::placeholder {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #0b817d;
+  background: #14532d;
 }
 .sidebar-note {
   margin: auto 3px 28px;
@@ -579,17 +580,17 @@ textarea::placeholder {
 }
 .sidebar-note strong {
   display: block;
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #4d7975;
 }
 .sidebar-note p {
-  font-size: 10px;
+  font-size: 0.8125rem;
   color: #95aaa6;
   line-height: 1.8;
   margin-top: 5px;
 }
 .sidebar-note a {
-  font-size: 10px;
+  font-size: 0.8125rem;
   color: #348c81;
   display: flex;
   align-items: center;
@@ -603,11 +604,11 @@ textarea::placeholder {
   gap: 8px;
   border-top: 1px solid #eef2f3;
   color: #9daab0;
-  font-size: 9px;
+  font-size: 0.8125rem;
 }
 .version-label {
   margin-left: auto;
-  font-size: 9px;
+  font-size: 0.8125rem;
   border: 1px solid #eef2f3;
   border-radius: 4px;
   padding: 1px 5px;
@@ -632,7 +633,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 13px;
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #b1bcc1;
 }
 .breadcrumb strong {
@@ -653,7 +654,7 @@ textarea::placeholder {
   align-items: center;
   gap: 5px;
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 10px;
+  font-size: 0.8125rem;
 }
 .topbar-divider {
   width: 1px;
@@ -669,15 +670,15 @@ textarea::placeholder {
   display: grid;
   place-items: center;
   color: #55857d;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .user-name strong {
-  font-size: 10px;
+  font-size: 0.8125rem;
   display: block;
   font-weight: 600;
 }
 .user-name small {
-  font-size: 8px;
+  font-size: 0.8125rem;
   display: block;
   color: #9dabb0;
   margin-top: 2px;
@@ -700,14 +701,14 @@ textarea::placeholder {
   margin-bottom: 27px;
 }
 .page-heading h1 {
-  font-size: 26px;
-  color: #28434b;
+  font-size: 1.8125rem;
+  color: #203d30;
   font-weight: 650;
   letter-spacing: -0.55px;
   margin-top: 6px;
 }
 .page-heading p {
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #8b9ba2;
   margin-top: 7px;
   line-height: 1.8;
@@ -730,7 +731,7 @@ textarea::placeholder {
   gap: 6px;
   border-radius: 5px;
   padding: 5px 8px;
-  font-size: 9px;
+  font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -746,7 +747,7 @@ textarea::placeholder {
   color: #8b969c;
   border: 1px solid #e6ebed;
   background: #fff;
-  font-size: 9px;
+  font-size: 0.8125rem;
 }
 .badge-teal {
   color: #14887a;
@@ -754,20 +755,20 @@ textarea::placeholder {
 }
 .welcome-banner h2 {
   color: #266c61;
-  font-size: 23px;
+  font-size: 1.625rem;
   font-weight: 600;
   margin-top: 10px;
   letter-spacing: -0.4px;
 }
 .welcome-banner p {
   color: #7c9c93;
-  font-size: 11px;
+  font-size: 0.9375rem;
   margin-top: 7px;
 }
 .welcome-date {
   display: block;
   color: #659383;
-  font-size: 9px;
+  font-size: 0.8125rem;
   margin-top: 15px;
 }
 .welcome-art {
@@ -804,7 +805,7 @@ textarea::placeholder {
   display: grid;
   place-items: center;
   color: #4a9b86;
-  font-size: 28px;
+  font-size: 1.9375rem;
   font-weight: 300;
   transform: rotate(9deg);
 }
@@ -824,7 +825,7 @@ textarea::placeholder {
   justify-content: space-between;
 }
 .section-label h2 {
-  font-size: 13px;
+  font-size: 1rem;
   font-weight: 600;
 }
 .stat-grid {
@@ -843,7 +844,7 @@ textarea::placeholder {
   align-items: center;
   justify-content: space-between;
   gap: 7px;
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #82949d;
 }
 .stat-icon {
@@ -876,7 +877,7 @@ textarea::placeholder {
 }
 .stat-value {
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 36px;
+  font-size: 2.5rem;
   font-weight: 550;
   letter-spacing: -1px;
   margin: 4px 0 8px;
@@ -886,14 +887,14 @@ textarea::placeholder {
 .stat-value span {
   font-family: var(--font-thai), sans-serif;
   color: #a0aeb5;
-  font-size: 10px;
+  font-size: 0.8125rem;
   font-weight: 400;
   margin-left: 10px;
   letter-spacing: 0;
 }
 .stat-caption {
   color: #a1aeb5;
-  font-size: 9px;
+  font-size: 0.8125rem;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -932,21 +933,21 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 0.9375rem;
   font-weight: 600;
 }
 .panel-header h2 > svg {
   color: #7e969d;
 }
 .panel-header p {
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #9aa8af;
   margin-top: 6px;
   line-height: 1.7;
 }
 .text-link {
   color: #5e9c92;
-  font-size: 9px;
+  font-size: 0.8125rem;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -957,7 +958,7 @@ textarea::placeholder {
   grid-template-columns: 1.7fr 1fr 0.7fr;
   padding: 12px 22px;
   background: #fafcfc;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #9faeb5;
   border-bottom: 1px solid #f1f4f5;
 }
@@ -982,18 +983,18 @@ textarea::placeholder {
   margin-bottom: 15px;
 }
 .empty-state h3 {
-  font-size: 12px;
+  font-size: 0.9375rem;
   color: #7b9098;
   font-weight: 500;
 }
 .empty-state p {
-  font-size: 10px;
+  font-size: 0.8125rem;
   color: #a5b3b9;
   margin-top: 7px;
   line-height: 1.8;
 }
 .empty-state .button {
-  font-size: 10px;
+  font-size: 0.8125rem;
   min-height: 34px;
   padding: 7px 12px;
   margin-top: 18px;
@@ -1004,7 +1005,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #b0a1a3;
 }
 .count-badge {
@@ -1014,7 +1015,7 @@ textarea::placeholder {
   padding: 4px 7px;
   color: #a2b1b7;
   font-family: var(--font-geist-sans), sans-serif;
-  font-size: 10px;
+  font-size: 0.8125rem;
 }
 .department-list {
   padding: 0 21px;
@@ -1036,17 +1037,17 @@ textarea::placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 0.9375rem;
   font-weight: 650;
   font-family: var(--font-geist-sans), sans-serif;
 }
 .department-row strong {
   display: block;
-  font-size: 10px;
+  font-size: 0.8125rem;
   font-weight: 550;
 }
 .department-row small {
-  font-size: 8px;
+  font-size: 0.8125rem;
   color: #a8b4ba;
   display: block;
   margin-top: 3px;
@@ -1056,11 +1057,11 @@ textarea::placeholder {
   text-align: right;
   font-family: var(--font-geist-sans), sans-serif;
   color: #7b929b;
-  font-size: 15px;
+  font-size: 1.0625rem;
 }
 .department-count small {
   font-family: var(--font-thai), sans-serif;
-  font-size: 8px;
+  font-size: 0.8125rem;
 }
 .department-note {
   margin: 4px 16px 15px;
@@ -1068,7 +1069,7 @@ textarea::placeholder {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 8px;
+  font-size: 0.8125rem;
   color: #8ca49d;
   padding: 10px;
   background: #f7faf9;
@@ -1089,21 +1090,21 @@ textarea::placeholder {
   background: #edf3f1;
 }
 .daily-note strong {
-  font-size: 11px;
+  font-size: 0.9375rem;
   font-weight: 500;
   color: #7c9690;
 }
 .daily-note p {
   margin-top: 4px;
   color: #a5b3b3;
-  font-size: 9px;
+  font-size: 0.8125rem;
 }
 .daily-note a {
   display: flex;
   align-items: center;
   gap: 8px;
   color: #7c9d95;
-  font-size: 10px;
+  font-size: 0.8125rem;
   margin-left: auto;
 }
 .app-footer {
@@ -1114,7 +1115,7 @@ textarea::placeholder {
   align-items: center;
   gap: 20px;
   color: #a6b3b9;
-  font-size: 8px;
+  font-size: 0.8125rem;
 }
 .app-footer > span {
   display: flex;
@@ -1144,7 +1145,7 @@ fieldset {
   margin-bottom: 20px;
 }
 .field label {
-  font-size: 11px;
+  font-size: 0.9375rem;
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
@@ -1166,7 +1167,7 @@ fieldset {
   padding: 11px 12px;
   border: 1px solid #e1e9ec;
   border-radius: 7px;
-  font-size: 12px;
+  font-size: 0.9375rem;
   color: #627982;
   background: #fff;
   min-width: 0;
@@ -1196,14 +1197,14 @@ fieldset {
   accent-color: var(--teal);
 }
 .priority-options strong {
-  font-size: 11px;
+  font-size: 0.9375rem;
   display: block;
   color: #718b93;
 }
 .priority-options small {
   display: block;
   color: #a0b0b5;
-  font-size: 9px;
+  font-size: 0.8125rem;
   margin-top: 4px;
 }
 .steps {
@@ -1228,16 +1229,16 @@ fieldset {
   display: grid;
   place-items: center;
   color: #70a99b;
-  font-size: 11px;
+  font-size: 0.9375rem;
   flex-shrink: 0;
 }
 .steps strong {
-  font-size: 11px;
+  font-size: 0.9375rem;
   font-weight: 550;
 }
 .steps p {
   color: #9badb4;
-  font-size: 10px;
+  font-size: 0.8125rem;
   line-height: 1.8;
   margin-top: 4px;
 }
@@ -1250,7 +1251,7 @@ fieldset {
   margin: 0 20px 20px;
   padding: 13px;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 0.8125rem;
   line-height: 1.9;
 }
 .workflow-strip {
@@ -1269,13 +1270,13 @@ fieldset {
   gap: 12px;
 }
 .workflow-strip strong {
-  font-size: 12px;
+  font-size: 0.9375rem;
   font-weight: 550;
   display: block;
 }
 .workflow-strip small {
   display: block;
-  font-size: 9px;
+  font-size: 0.8125rem;
   color: #9aaeb6;
   margin-top: 5px;
 }
@@ -1290,13 +1291,13 @@ fieldset {
 }
 .filter-bar label {
   color: #98a9b1;
-  font-size: 10px;
+  font-size: 0.8125rem;
 }
 .filter-bar select,
 .filter-bar input {
   width: auto;
   min-width: 140px;
-  font-size: 10px;
+  font-size: 0.8125rem;
   padding: 8px 10px;
 }
 .queue-legend {
@@ -1304,7 +1305,7 @@ fieldset {
   align-items: center;
   gap: 8px;
   margin-left: auto;
-  font-size: 10px;
+  font-size: 0.8125rem;
   color: #99a8ae;
 }
 .queue-legend .rose {
@@ -1317,7 +1318,7 @@ fieldset {
   overflow: hidden;
 }
 .display-heading {
-  background: #0d7773;
+  background: #14532d;
   color: white;
   padding: 24px 28px;
   display: flex;
@@ -1329,13 +1330,13 @@ fieldset {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 20px;
+  font-size: 1.375rem;
   font-family: var(--font-geist-sans), sans-serif;
   font-weight: 600;
 }
 .display-heading > span:last-child {
   font-family: var(--font-thai), sans-serif;
-  font-size: 11px;
+  font-size: 0.9375rem;
   font-weight: 400;
   color: #b5dcd7;
 }
@@ -1344,15 +1345,15 @@ fieldset {
   text-align: center;
 }
 .display-message > strong {
-  color: #117f78;
+  color: #166534;
   display: block;
-  font-size: 50px;
+  font-size: 3.5rem;
   margin: 15px 0;
   font-weight: 600;
 }
 .display-message > p {
   color: #91aaa8;
-  font-size: 13px;
+  font-size: 1rem;
 }
 .display-departments {
   padding: 0 24px 28px;
@@ -1368,18 +1369,18 @@ fieldset {
   text-align: center;
 }
 .display-departments h2 {
-  font-size: 12px;
+  font-size: 0.9375rem;
   margin: 12px 0;
 }
 .display-departments strong {
-  font-size: 30px;
+  font-size: 2.125rem;
   display: block;
   color: #96aaa3;
 }
 .display-departments > div > span:last-child {
   display: block;
   color: #9eb1aa;
-  font-size: 9px;
+  font-size: 0.8125rem;
   margin-top: 7px;
 }
 .display-footer {
@@ -1387,7 +1388,7 @@ fieldset {
   background: #f1f7f4;
   text-align: center;
   color: #8ba499;
-  font-size: 10px;
+  font-size: 0.8125rem;
 }
 .settings-grid {
   display: grid;
@@ -1406,7 +1407,7 @@ fieldset {
   gap: 15px;
   border-bottom: 1px solid #f1f4f5;
   padding: 16px 0;
-  font-size: 11px;
+  font-size: 0.9375rem;
 }
 .details-list dt {
   color: #9aaab2;
@@ -1422,7 +1423,7 @@ fieldset {
 }
 .password-section h3,
 .settings-departments h3 {
-  font-size: 12px;
+  font-size: 0.9375rem;
   font-weight: 600;
   padding: 22px 24px 0;
 }
@@ -1434,7 +1435,7 @@ fieldset {
   margin-bottom: 18px;
 }
 .form-feedback {
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #387e74;
   line-height: 1.8;
   padding: 12px;
@@ -1456,7 +1457,7 @@ fieldset {
   align-items: center;
   gap: 12px;
   margin-top: 15px;
-  font-size: 11px;
+  font-size: 0.9375rem;
 }
 .settings-departments strong {
   font-weight: 500;
@@ -1477,17 +1478,17 @@ fieldset {
   text-align: center;
 }
 .error-page h1 {
-  font-size: 24px;
+  font-size: 1.6875rem;
 }
 .error-page p {
-  font-size: 13px;
+  font-size: 1rem;
 }
 /* Shared reading sizes and contrast for the clinic workspace. */
-.nav-item { font-size: 13px; }
+.nav-item { font-size: 1rem; }
 .page-heading p, .stat-label, .panel-header p, .empty-state p,
 .stat-caption, .department-note, .panel-footnote, .form-note,
 .daily-note p, .steps p, .info-note, .display-footer {
-  font-size: 11px;
+  font-size: 0.9375rem;
   color: #6d828a;
 }
 .department-row small, .department-count small, .sidebar-note p,
@@ -1496,7 +1497,7 @@ fieldset {
   color: #70858e;
 }
 .stat-value span, .empty-state h3 { color: #6d828a; }
-.department-row strong, .field label { font-size: 12px; }
+.department-row strong, .field label { font-size: 0.9375rem; }
 
 @media (min-width: 1600px) {
   .page-content {
@@ -1526,7 +1527,7 @@ fieldset {
     margin-top: 12px;
   }
   .login-story h1 {
-    font-size: 34px;
+    font-size: 2.375rem;
   }
 }
 @media (max-width: 1150px) {
@@ -1559,7 +1560,7 @@ fieldset {
     padding-right: 35px;
   }
   .login-story h1 {
-    font-size: 33px;
+    font-size: 2.3125rem;
   }
   .login-story-footer {
     flex-direction: column;
@@ -1607,13 +1608,13 @@ fieldset {
     padding: 30px 25px;
   }
   .login-story h1 {
-    font-size: 27px;
+    font-size: 1.875rem;
   }
   .login-story-content > p {
-    font-size: 11px;
+    font-size: 0.9375rem;
   }
   .floating-tag {
-    font-size: 9px;
+    font-size: 0.8125rem;
     padding: 10px;
     gap: 6px;
   }
@@ -1622,7 +1623,7 @@ fieldset {
     padding-right: 30px;
   }
   .login-panel-footer {
-    font-size: 8px;
+    font-size: 0.8125rem;
   }
   .workflow-strip {
     gap: 12px;
@@ -1652,7 +1653,7 @@ fieldset {
     max-width: 380px;
   }
   .login-card h2 {
-    font-size: 26px;
+    font-size: 1.8125rem;
   }
   .login-security-icon {
     width: 48px;
@@ -1661,7 +1662,7 @@ fieldset {
   }
   .login-panel-footer {
     padding: 0 20px;
-    font-size: 8px;
+    font-size: 0.8125rem;
   }
   .page-content {
     padding: 25px 18px;
@@ -1686,16 +1687,16 @@ fieldset {
     flex-wrap: wrap;
   }
   .page-heading h1 {
-    font-size: 24px;
+    font-size: 1.6875rem;
   }
   .page-heading p {
     max-width: 280px;
     line-height: 1.9;
-    font-size: 10px;
+    font-size: 0.8125rem;
   }
   .page-heading > .button {
     min-height: 38px;
-    font-size: 10px;
+    font-size: 0.8125rem;
     padding: 8px 13px;
   }
   .welcome-banner {
@@ -1703,10 +1704,10 @@ fieldset {
     min-height: 178px;
   }
   .welcome-banner h2 {
-    font-size: 19px;
+    font-size: 1.3125rem;
   }
   .welcome-banner p {
-    font-size: 10px;
+    font-size: 0.8125rem;
     max-width: 210px;
     line-height: 1.8;
   }
@@ -1727,7 +1728,7 @@ fieldset {
     right: 0;
     width: 26px;
     height: 26px;
-    font-size: 21px;
+    font-size: 1.5rem;
   }
   .stat-grid {
     grid-template-columns: 1fr 1fr;
@@ -1737,10 +1738,10 @@ fieldset {
     padding: 14px 16px;
   }
   .stat-value {
-    font-size: 31px;
+    font-size: 2.1875rem;
   }
   .stat-label {
-    font-size: 10px;
+    font-size: 0.8125rem;
   }
   .stat-icon {
     width: 29px;
@@ -1748,7 +1749,7 @@ fieldset {
     border-radius: 8px;
   }
   .stat-caption {
-    font-size: 8px;
+    font-size: 0.8125rem;
   }
   .dashboard-columns {
     grid-template-columns: 1fr;
@@ -1758,10 +1759,10 @@ fieldset {
     padding: 18px;
   }
   .panel-header h2 {
-    font-size: 12px;
+    font-size: 0.9375rem;
   }
   .panel-header p {
-    font-size: 9px;
+    font-size: 0.8125rem;
   }
   .daily-note {
     padding: 15px;
@@ -1770,14 +1771,14 @@ fieldset {
   }
   .daily-note a {
     margin: 3px 0 0 45px;
-    font-size: 9px;
+    font-size: 0.8125rem;
   }
   .daily-note p {
-    font-size: 8px;
+    font-size: 0.8125rem;
   }
   .app-footer {
     padding: 16px 18px;
-    font-size: 8px;
+    font-size: 0.8125rem;
   }
   .app-footer > span:last-child {
     display: none;
@@ -1804,7 +1805,7 @@ fieldset {
     padding: 14px 18px;
   }
   .workflow-strip small {
-    font-size: 10px;
+    font-size: 0.8125rem;
   }
   .display-heading {
     padding: 20px;
@@ -1813,13 +1814,13 @@ fieldset {
     gap: 12px;
   }
   .display-heading > span:last-child {
-    font-size: 10px;
+    font-size: 0.8125rem;
   }
   .display-message {
     padding: 35px 20px;
   }
   .display-message > strong {
-    font-size: 36px;
+    font-size: 2.5rem;
   }
   .display-departments {
     grid-template-columns: 1fr 1fr;
@@ -1827,7 +1828,7 @@ fieldset {
     gap: 12px;
   }
   .display-footer {
-    font-size: 9px;
+    font-size: 0.8125rem;
     line-height: 1.8;
     padding: 14px 22px;
   }
@@ -1852,4 +1853,57 @@ fieldset {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Forest green surfaces and readable supporting text. */
+.sidebar {
+  background: #103d27;
+  border-right-color: #1f5238;
+  overflow-y: auto;
+}
+.sidebar .brand strong,
+.sidebar .brand strong span { color: #fff; }
+.sidebar .brand small,
+.sidebar .nav-caption,
+.sidebar .sidebar-bottom { color: #bfd8c7; }
+.sidebar .brand-symbol { background: #24633e; }
+.sidebar .nav-item { color: #d4e7da; }
+.sidebar .nav-item:hover { background: #1b5034; color: #fff; }
+.sidebar .nav-item.active { background: #e1f1e5; color: #14532d; }
+.sidebar .workspace-label,
+.sidebar .sidebar-note { background: #174930; border-color: #2b6042; color: #f0f8f2; }
+.sidebar .workspace-label small,
+.sidebar .sidebar-note p { color: #c2d9ca; }
+.sidebar .sidebar-note strong,
+.sidebar .sidebar-note a,
+.sidebar .note-icon,
+.sidebar .workspace-label > svg { color: #d5efdd; }
+.sidebar .sidebar-bottom { border-top-color: #2b6042; min-height: 53px; flex-shrink: 0; }
+.sidebar .version-label { border-color: #3f6b50; }
+.sidebar .icon-button { color: #d4e7da; }
+.welcome-banner { background: #e2efe5; border-color: #cfe2d4; }
+.welcome-banner h2 { color: #14532d; }
+.welcome-banner p,
+.welcome-date { color: #466c52; }
+.login-description,
+.login-help,
+.form-note,
+.page-heading p,
+.stat-label,
+.stat-caption,
+.panel-header p,
+.empty-state p,
+.field label,
+.details-list dt,
+.filter-bar label { color: #526d5b; }
+.login-story-content > p { color: #c5dfce; }
+.login-story-footer { color: #bcd7c6; }
+.button { min-height: 46px; }
+.login-panel-footer { position: static; margin-top: 40px; }
+.topbar-actions, .page-heading > div, .stat-label { min-width: 0; }
+.user-name strong { overflow-wrap: anywhere; }
+@media (max-width: 650px) {
+  .stat-label { flex-wrap: wrap; }
+  .display-departments > div { padding: 16px 10px; }
+  .queue-legend { flex-wrap: wrap; }
 }
