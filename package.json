@@ -13,7 +13,9 @@
     "setup:admin": "node --conditions=react-server --import tsx scripts/setup-admin.ts",
     "test:e2e": "playwright test",
     "db:migrate:patients": "node --conditions=react-server --import tsx scripts/migrate-patients.ts",
-    "test:patients": "node --import tsx --test tests/unit/patient-validation.test.ts && node --conditions=react-server --import tsx scripts/test-patients.ts"
+    "test:patients": "node --import tsx --test tests/unit/patient-validation.test.ts && node --conditions=react-server --import tsx scripts/test-patients.ts",
+    "db:migrate:bookings": "node --conditions=react-server --import tsx scripts/migrate-bookings.ts",
+    "test:calendar": "node --import tsx --test tests/unit/calendar.test.ts && node --conditions=react-server --import tsx scripts/test-calendar.ts"
   },
   "dependencies": {
     "@next/env": "^16.4.5",

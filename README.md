@@ -30,10 +30,17 @@ The application follows `BRD/brd.md` with Thai desktop/tablet/mobile layouts:
 | `/dashboard` | Overview shell, department cards, and queue/statistics placeholders |
 | `/registration` | Searchable, paginated patient directory backed by PostgreSQL |
 | `/registration/new` | Hospital-style patient registration with validation and persistence |
+| `/calendar` | Monthly booking calendar, daily agenda, department filter, and booking form |
 | `/queues` | Queue management scaffold; calling/completing/cancelling is pending |
 | `/history` | Daily history scaffold |
 | `/display` | Waiting room display scaffold, currently admin-only |
 | `/settings` | Admin account details and working password change |
+
+Run `npm run db:migrate:bookings` after the patient migration to enable booking
+storage in each environment. Calendar times use Asia/Bangkok. Bookings reference
+registered patients by HN and prevent duplicate appointments for a patient at the
+same time. Only administrators can view or create bookings. Booking registration
+does not create a queue entry; status management and online self-booking are future work.
 
 Queue CRUD, numbering, urgent/FIFO sorting, statistics, daily rollover, and live
 display updates are future work. Placeholders use `—` rather than invented data.
@@ -169,6 +176,13 @@ This validates inputs and exercises registration, persistence, search, duplicate
 rejection, automatic HN generation, and mobile layout with synthetic records. It
 removes only the records created by that run. The configured bootstrap admin
 credentials must match the current database password.
+
+Calendar checks use the same local server/admin setup and clean up their synthetic
+patient and booking records:
+
+```sh
+npm run test:calendar
+```
 
 Browser regression tests (Chrome installed locally):
 

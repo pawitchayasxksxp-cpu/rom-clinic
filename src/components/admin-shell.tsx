@@ -25,6 +25,7 @@ import { navigation } from "@/lib/navigation";
 const icons = {
   dashboard: LayoutDashboard,
   registration: ClipboardList,
+  calendar: CalendarDays,
   queues: ListOrdered,
   history: History,
   display: Monitor,

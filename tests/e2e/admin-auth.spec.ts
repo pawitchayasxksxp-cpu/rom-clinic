@@ -4,6 +4,7 @@ const paths = [
   "/dashboard",
   "/registration",
   "/registration/new",
+  "/calendar",
   "/queues",
   "/history",
   "/display",
@@ -91,6 +92,7 @@ test("admin can login, navigate all menus, reload, and logout revokes the sessio
   expect(sessionCookie?.sameSite).toBe("Lax");
   for (const [path, title] of [
     ["/registration", "รายชื่อผู้ป่วย"],
+    ["/calendar", "ปฏิทินการจอง"],
     ["/queues", "จัดการคิว"],
     ["/history", "ประวัติประจำวัน"],
     ["/display", "จอแสดงคิว"],
