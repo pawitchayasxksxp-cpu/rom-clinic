@@ -2,6 +2,7 @@ export const navigation = [
   { href: "/dashboard", label: "ภาพรวม", icon: "dashboard" },
   { href: "/registration", label: "รายชื่อผู้ป่วย", icon: "registration" },
   { href: "/calendar", label: "ปฏิทินการจอง", icon: "calendar" },
+  { href: "/billing", label: "ชำระเงิน", icon: "billing" },
   { href: "/dispensing", label: "จ่ายยา", icon: "dispensing" },
   { href: "/queues", label: "จัดการคิว", icon: "queues" },
   { href: "/history", label: "ประวัติประจำวัน", icon: "history" },

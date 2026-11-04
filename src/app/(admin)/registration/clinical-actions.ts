@@ -1,4 +1,5 @@
 "use server";
+import { BillingError, redeemCourse } from "@/lib/billing-transactions";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/lib/session";
@@ -12,13 +13,22 @@ export async function saveTreatment(_state: { error: string }, form: FormData): 
   const result = validateTreatment(form);
   if (!result.data) return { error: result.error! };
   if (!await getPatient(result.patientId)) return { error: "ไม่พบผู้ป่วย" };
+  const entitlement = form.get("patient-course-id");
+  if (entitlement !== null && typeof entitlement !== "string") return { error: "ข้อมูลคอร์สไม่ถูกต้อง" };
+  const client = await getDatabase().connect();
   try {
-    await getDatabase().query(
+    await client.query("BEGIN");
+    if (!(await client.query("SELECT id FROM rom_patient WHERE id=$1 AND deleted_at IS NULL FOR SHARE", [result.patientId])).rowCount) throw new BillingError("ไม่พบผู้ป่วย");
+    const saved = await client.query(
       `INSERT INTO rom_treatment (id, patient_id, visit_at, department, details, created_by)
-       VALUES ($1, $2, $3, $4, $5::jsonb, $6) ON CONFLICT (id) DO NOTHING`,
+       VALUES ($1, $2, $3, $4, $5::jsonb, $6) ON CONFLICT (id) DO NOTHING RETURNING id`,
       [result.key, result.patientId, `${result.data["visit-date"]}T${result.data["visit-time"]}:00+07:00`, result.data.department, JSON.stringify(result.data), user.id],
     );
-  } catch { return { error: "บันทึกประวัติการรักษาไม่สำเร็จ กรุณาลองอีกครั้ง" }; }
+    if (saved.rowCount && entitlement) await redeemCourse(client, entitlement, result.key, result.patientId, result.key, user.id);
+    await client.query("COMMIT");
+  } catch(error) { await client.query("ROLLBACK"); return { error: error instanceof BillingError ? error.message : "บันทึกประวัติการรักษาไม่สำเร็จ กรุณาลองอีกครั้ง" }; }
+  finally { client.release(); }
+  revalidatePath("/registration");
   revalidatePath(`/registration/${result.patientId}`);
   redirect(`/registration/${result.patientId}?treatment-saved=1#treatment-history`);
 }

@@ -332,3 +332,29 @@ clinical records and stock movements. The original HN remains reserved.
 Repeat visits have fresh vital-sign fields in the treatment form and retain each
 measurement in dated treatment history. Registration measurements remain separate.
 Check both flows with `node --conditions=react-server --import tsx scripts/test-patient-delete-vitals.ts`.
+
+## Billing and purchased courses
+
+Apply `npm run db:migrate:billing` after the existing patient, clinical, course,
+Master Data and dispensing-stock migrations. It adds session counts/optional
+validity to course definitions and private payment, purchased-course and usage tables.
+Existing course selections do not create historical sales or prepaid balances.
+
+Use **ชำระเงิน** or the patient's **ชำระเงิน / ซื้อคอร์ส** button. Add service
+charges, courses and unbilled dispensing records. Payment supports cash/change,
+verified bank transfer, fixed amount discounts with a reason, immutable receipt
+snapshots, printing/PDF and Excel. Daily totals use Bangkok receipt dates.
+Dispensing prices are snapshotted on new labels; older labels use the current
+medicine price until their first payment is saved. Paying never deducts stock again.
+
+Paid courses keep their purchased name, price, session count and optional expiry,
+independent of later Master Data edits. Choose a purchased course while recording
+a treatment to use one session atomically, or link an existing untreated course
+usage from the patient's course panel. A treatment can use at most one course
+session. Retries are idempotent; expired/exhausted courses cannot be used.
+
+Run `node --import tsx --test tests/unit/*.test.ts` and, with the local server on
+port 3000, `node --conditions=react-server --import tsx scripts/test-billing.ts`.
+The integration test uses and removes only synthetic fixtures; it checks actual
+payment/receipt/Excel/print flows and concurrent usage from separate processes.
+Receipt numbers may have gaps; they are never reset by tests.

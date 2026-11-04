@@ -9,8 +9,8 @@ export async function patientHistory(patientId: string, page: number) {
   await requireAdmin();
   const result = await getDatabase().query<ClinicalEvent>(
     `WITH events AS (
-      SELECT id, 'treatment' AS kind, visit_at AS occurred_at, department, details
-      FROM rom_treatment WHERE patient_id = $1
+      SELECT t.id, 'treatment' AS kind, t.visit_at AS occurred_at, t.department, t.details || CASE WHEN c.id IS NULL THEN '{}'::jsonb ELSE jsonb_build_object('course-used',c.name) END AS details
+      FROM rom_treatment t LEFT JOIN rom_course_usage u ON u.treatment_id=t.id LEFT JOIN rom_patient_course c ON c.id=u.patient_course_id WHERE t.patient_id = $1
       UNION ALL
       SELECT id, 'dispensing', created_at, NULL, details FROM rom_dispensing WHERE patient_id = $1
       UNION ALL

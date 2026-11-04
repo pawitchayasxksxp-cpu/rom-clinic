@@ -1,4 +1,5 @@
 import { DeletePatientButton } from "@/components/delete-patient-button";
+import { PatientCourses } from "@/components/patient-courses";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Accessibility, ArrowLeft, FilePlus2, HeartPulse, Pencil, UserRound } from "lucide-react";
@@ -64,6 +65,7 @@ export default async function PatientDetailPage({ params, searchParams }: {
       </dl>
     </section>
     {query["treatment-saved"] === "1" && <p role="status" className="form-feedback">บันทึกประวัติการรักษาเรียบร้อยแล้ว</p>}
+    <PatientCourses patientId={id} />
     <PatientClinicalHistory patientId={id} page={historyPage} query={backParams.toString()} />
     <div className="patient-detail-grid">
       <DetailSection title="ข้อมูลส่วนตัวและการติดต่อ" items={[

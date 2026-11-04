@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   Activity,
+  ReceiptText,
   ArrowUpRight,
   CalendarDays,
   ChevronRight,
@@ -35,6 +36,7 @@ const icons = {
   display: Monitor,
   settings: Settings2,
   master: Database,
+  billing: ReceiptText,
 };
 export function AdminShell({
   user,

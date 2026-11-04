@@ -1,0 +1,9 @@
+"use client";
+import {startTransition,useActionState} from 'react';
+import type {PurchasedCourse} from '@/lib/billing';
+import {usePatientCourse} from '@/app/(admin)/billing/actions';
+export function CourseUsageForm({patientId,usageKey,courses,treatments}:{patientId:string;usageKey:string;courses:PurchasedCourse[];treatments:{id:string;date:string}[]}){
+ const [state,action,pending]=useActionState(usePatientCourse,{error:'',message:''});const available=courses.filter(c=>c.remaining>0&&!c.expired);
+ if(!available.length||!treatments.length)return null;
+ return <form className="registration-form course-usage-form" onSubmit={event=>{event.preventDefault();if(!window.confirm('ยืนยันใช้คอร์ส 1 ครั้งสำหรับการรักษาที่เลือก?'))return;const data=new FormData(event.currentTarget);startTransition(()=>action(data));}}><input type="hidden" name="patient-id" value={patientId}/><input type="hidden" name="usage-key" value={usageKey}/><fieldset disabled={pending}><h3>ตัดคอร์สจากการรักษาที่บันทึกไว้</h3><div className="field-grid"><div className="field"><label htmlFor="use-course">คอร์สที่ใช้</label><select id="use-course" name="patient-course-id" required defaultValue=""><option value="" disabled>เลือกคอร์ส</option>{available.map(c=><option key={c.id} value={c.id}>{c.name} · เหลือ {c.remaining} ครั้ง</option>)}</select></div><div className="field"><label htmlFor="use-treatment">ครั้งที่มารักษา</label><select id="use-treatment" name="treatment-id" required defaultValue=""><option value="" disabled>เลือกการรักษาที่ยังไม่ตัดคอร์ส</option>{treatments.map(t=><option key={t.id} value={t.id}>{t.date}</option>)}</select></div></div>{state.error&&<p role="alert" className="form-error">{state.error}</p>}{state.message&&<p role="status" className="form-feedback">{state.message}</p>}<button type="submit" className="button button-primary" disabled={pending}>{pending?'กำลังบันทึก…':'ใช้คอร์ส 1 ครั้ง'}</button></fieldset></form>;
+}

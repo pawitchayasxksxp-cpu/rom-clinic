@@ -9,13 +9,13 @@ export async function saveCourse(_state: { error: string; message: string }, for
   await requireAdmin();
   const result = validateCourse(form);
   if (!result.data) return { error: result.error!, message: "" };
-  const { id, name, price, description } = result.data;
+  const { id, name, price, description, totalSessions, validityDays } = result.data;
   const mode = form.get("mode");
   if (mode !== "create" && mode !== "update") return { error: "รูปแบบการบันทึกไม่ถูกต้อง", message: "" };
   let image: ImageAsset | null = null;
   try {
     image = await uploadMasterImage(form);
-    const saved = mode === "create" ? await getDatabase().query("INSERT INTO rom_course (id, name, price, description, image_asset) VALUES ($1, $2, $3, $4, $5::jsonb) ON CONFLICT (id) DO NOTHING RETURNING id", [id, name, price, description, image ? JSON.stringify(image) : null]) : await getDatabase().query("UPDATE rom_course SET name = $2, price = $3, description = $4, image_asset=COALESCE($5::jsonb, image_asset), updated_at = CURRENT_TIMESTAMP WHERE id = $1 AND archived_at IS NULL RETURNING id", [id, name, price, description, image ? JSON.stringify(image) : null]);
+    const saved = mode === "create" ? await getDatabase().query("INSERT INTO rom_course (id, name, price, description, image_asset, total_sessions, validity_days) VALUES ($1, $2, $3, $4, $5::jsonb, $6, $7) ON CONFLICT (id) DO NOTHING RETURNING id", [id, name, price, description, image ? JSON.stringify(image) : null, totalSessions, validityDays]) : await getDatabase().query("UPDATE rom_course SET name = $2, price = $3, description = $4, image_asset=COALESCE($5::jsonb, image_asset), total_sessions=$6, validity_days=$7, updated_at = CURRENT_TIMESTAMP WHERE id = $1 AND archived_at IS NULL RETURNING id", [id, name, price, description, image ? JSON.stringify(image) : null, totalSessions, validityDays]);
     if (!saved.rowCount && image) await removeMasterImage(image);
     if (mode === "update" && !saved.rowCount) return { error: "ไม่พบคอร์ส หรือคอร์สถูกลบแล้ว", message: "" };
   } catch { if (image) await removeMasterImage(image); return { error: "บันทึกคอร์สไม่สำเร็จ ตรวจสอบรูปภาพและลองอีกครั้ง", message: "" }; }

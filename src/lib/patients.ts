@@ -17,6 +17,7 @@ export type PatientSummary = {
   course_id: string | null;
   course_name: string | null;
   course_price: string | null;
+  course_balance: string | null;
 };
 
 export async function listPatients(search: string, page: number) {
@@ -26,6 +27,7 @@ export async function listPatients(search: string, page: number) {
     `SELECT p.id::text, COALESCE(p.hn, 'ROM-' || lpad(p.id::text, 8, '0')) AS hn,
       p.first_name, p.last_name, p.phone, p.department,
       p.details->>'service-type' AS service_type, p.course_id::text, c.name AS course_name, c.price::text AS course_price,
+      (SELECT string_agg(pc.name || ' · ' || pc.remaining::text || '/' || pc.total_sessions::text || ' ครั้ง', E'\n' ORDER BY pc.created_at DESC) FROM rom_patient_course pc WHERE pc.patient_id=p.id AND pc.remaining>0 AND (pc.expires_on IS NULL OR pc.expires_on >= (now() AT TIME ZONE 'Asia/Bangkok')::date)) AS course_balance,
       p.details->>'bp-systolic' AS bp_systolic, p.details->>'bp-diastolic' AS bp_diastolic, p.details->>'pulse' AS pulse,
       to_char(p.created_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY HH24:MI') AS registered_date
      FROM rom_patient p LEFT JOIN rom_course c ON c.id = p.course_id

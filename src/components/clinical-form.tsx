@@ -1,12 +1,13 @@
 "use client";
 import { startTransition, useActionState } from "react";
+import type { PurchasedCourse } from "@/lib/billing";
 import Link from "next/link";
 import { Save } from "lucide-react";
 import { departments } from "@/lib/navigation";
 import { saveCertificate, saveTreatment } from "@/app/(admin)/registration/clinical-actions";
 
-export function ClinicalForm({ mode, patientId, recordKey, date, time, provider, professional }: {
-  mode: "treatment" | "certificate"; patientId: string; recordKey: string; date: string; time: string; provider: string; professional?: Record<string, string>;
+export function ClinicalForm({ mode, patientId, recordKey, date, time, provider, professional, courses = [] }: {
+  mode: "treatment" | "certificate"; patientId: string; recordKey: string; date: string; time: string; provider: string; professional?: Record<string, string>; courses?: PurchasedCourse[];
 }) {
   const treatment = mode === "treatment";
   const [state, action, pending] = useActionState(async (previous: { error: string }, data: FormData) => treatment ? saveTreatment(previous, data) : saveCertificate(previous, data), { error: "" });
@@ -20,6 +21,7 @@ export function ClinicalForm({ mode, patientId, recordKey, date, time, provider,
       {treatment ? <>
         <div className="field-grid">{field("visit-date", "วันที่รับบริการ (ค.ศ.)", { required: true, type: "date", value: date, max: date })}{field("visit-time", "เวลารับบริการ (เวลาไทย)", { required: true, type: "time", value: time })}</div>
         <div className="field"><label htmlFor="department">แผนก <span>*</span></label><select id="department" name="department" required defaultValue=""><option value="" disabled>เลือกแผนก</option>{departments.map(item => <option key={item.code} value={item.code}>{item.name}</option>)}</select></div>
+        <div className="field"><label htmlFor="treatment-course">ใช้คอร์สในการรักษาครั้งนี้</label><select id="treatment-course" name="patient-course-id" defaultValue=""><option value="">ไม่ใช้คอร์ส</option>{courses.filter(c => c.remaining > 0 && !c.expired).map(c => <option key={c.id} value={c.id}>{c.name} · เหลือ {c.remaining} ครั้ง{c.expires_on ? ` · หมดอายุ ${c.expires_on}` : ""}</option>)}</select><p className="form-note">เลือกคอร์สเพื่อตัด 1 ครั้งพร้อมบันทึกการรักษา</p></div>
         <section id="visit-vitals" className="visit-vitals-entry" aria-label="สัญญาณชีพในการรักษาครั้งนี้"><h2>ความดันและชีพจรครั้งนี้</h2><p className="form-note">กรอกค่าที่วัดใหม่ในการมารักษาครั้งนี้ ระบบเก็บแยกตามวันที่และเวลารับบริการในประวัติการรักษา</p>
         <div className="field-grid">{field("bp-systolic", "ความดันตัวบน (mmHg)", { type: "number", min: "1", max: "999" })}{field("bp-diastolic", "ความดันตัวล่าง (mmHg)", { type: "number", min: "1", max: "999" })}{field("pulse", "ชีพจร (ครั้ง/นาที)", { type: "number", min: "1", max: "999" })}</div>
         </section>
