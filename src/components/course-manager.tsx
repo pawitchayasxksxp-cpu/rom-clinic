@@ -2,7 +2,7 @@
 import { startTransition, useActionState, useState, useTransition } from "react";
 import Image from "next/image";
 import { MasterImageField } from "./master-image-field";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { saveCourse, deleteCourse } from "@/app/(admin)/settings/course-actions";
 import type { Course } from "@/lib/courses";
 
@@ -18,9 +18,28 @@ function CourseForm({ id, course }: { id: string; course?: Course }) {
   </form>;
 }
 function CourseRow({ course }: { course: Course }) {
-  const [error, setError] = useState(""); const [pending, start] = useTransition();
+  const [error, setError] = useState("");
+  const [pending, start] = useTransition();
   const [editing, setEditing] = useState(false);
-  return <li data-course-id={course.id}><div className="course-row-heading"><div className="master-record-heading">{course.image_url && <Image src={course.image_url} alt={course.name} width={72} height={72} unoptimized />}<div><strong>{course.name}</strong><p>{new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB" }).format(Number(course.price))}</p></div></div><div className="course-row-actions"><button type="button" className="button button-secondary" disabled={pending} aria-expanded={editing} aria-controls={`course-edit-${course.id}`} onClick={() => setEditing(previous => !previous)}><Pencil size={16} />แก้ไขคอร์ส</button><button type="button" className="button button-secondary" disabled={pending} onClick={() => start(async () => { try { const result = await deleteCourse(course.id); setError(result.error); } catch { setError("ลบคอร์สไม่สำเร็จ"); } })}><Trash2 size={16} />{pending ? "กำลังลบ…" : "ลบคอร์ส"}</button></div></div><p>{course.total_sessions} ครั้ง · {course.validity_days ? `อายุ ${course.validity_days} วัน` : "ไม่กำหนดวันหมดอายุ"}</p>{course.description && <p className="course-description">{course.description}</p>}{error && <p role="alert" className="form-error">{error}</p>}<div id={`course-edit-${course.id}`} hidden={!editing}><CourseForm id={course.id} course={course} /></div></li>;
+  const [viewing, setViewing] = useState(false);
+  return <li data-course-id={course.id}>
+    <div className="course-row-heading">
+      <div className="master-record-heading"><div><strong>{course.name}</strong><p>{new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB" }).format(Number(course.price))}</p></div></div>
+      <div className="course-row-actions">
+        <button type="button" className="button button-secondary" disabled={pending} aria-expanded={viewing} aria-controls={`course-details-${course.id}`} onClick={() => { setViewing(previous => !previous); setEditing(false); }}><Eye size={16} />ดูรายละเอียดคอร์ส</button>
+        <div className="course-edit-actions">
+          <button type="button" className="button button-secondary" disabled={pending} aria-expanded={editing} aria-controls={`course-edit-${course.id}`} onClick={() => { setEditing(previous => !previous); setViewing(false); }}><Pencil size={16} />แก้ไขคอร์ส</button>
+          <button type="button" className="button button-secondary" disabled={pending} onClick={() => start(async () => { try { const result = await deleteCourse(course.id); setError(result.error); } catch { setError("ลบคอร์สไม่สำเร็จ"); } })}><Trash2 size={16} />{pending ? "กำลังลบ…" : "ลบคอร์ส"}</button>
+        </div>
+      </div>
+    </div>
+    <section id={`course-details-${course.id}`} className="course-details-panel" hidden={!viewing} aria-label={`รายละเอียด ${course.name}`}>
+      {course.image_url && <Image src={course.image_url} alt={course.name} width={160} height={120} unoptimized />}
+      <dl><div><dt>จำนวนครั้ง</dt><dd>{course.total_sessions} ครั้ง</dd></div><div><dt>อายุคอร์ส</dt><dd>{course.validity_days ? `${course.validity_days} วัน` : "ไม่กำหนดวันหมดอายุ"}</dd></div><div><dt>รายละเอียดคอร์ส</dt><dd>{course.description || "ไม่ได้ระบุรายละเอียด"}</dd></div></dl>
+    </section>
+    {error && <p role="alert" className="form-error">{error}</p>}
+    <div id={`course-edit-${course.id}`} hidden={!editing}><CourseForm id={course.id} course={course} /></div>
+  </li>;
 }
 export function CourseManager({ courses, newId }: { courses: Course[]; newId: string }) {
   return <section className="panel course-manager" aria-label="จัดการราคาคอร์ส"><div className="panel-header"><div><h2>จัดการราคาคอร์ส</h2><p>เพิ่ม แก้ไขชื่อ ราคา และลบคอร์สที่ไม่เปิดให้บริการ</p></div></div><details className="new-course"><summary><Plus size={18} />เพิ่มคอร์สใหม่</summary><CourseForm key={newId} id={newId} /></details>{courses.length ? <ul className="course-list">{courses.map(course => <CourseRow key={JSON.stringify(course)} course={course} />)}</ul> : <div className="empty-state"><h3>ยังไม่มีคอร์ส</h3><p>เพิ่มคอร์สและราคาเพื่อให้เลือกในรายชื่อผู้ป่วย</p></div>}</section>;

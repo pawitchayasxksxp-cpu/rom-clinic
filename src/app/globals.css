@@ -2089,9 +2089,9 @@ fieldset {
 .patient-service-select p { color: #9a342c; }
 
 .admin-management { margin-top: 24px; }
-.admin-management-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); }
+.admin-management-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .admin-section-title { font-size: 1rem; margin: 24px 24px 0; }
-.admin-list { border-left: 1px solid var(--line); }
+.admin-list { border-top: 1px solid var(--line); }
 .admin-list ul { list-style: none; padding: 0 24px 24px; }
 .admin-list li { padding: 16px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
 .admin-list li > strong { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
@@ -2402,5 +2402,23 @@ select:not([multiple]) { max-width: 100%; min-width: 0; }
 
 .patient-course-balance { white-space: pre-line; min-width: 170px; }
 
-.course-row-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.course-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .course-row-actions .button { white-space: nowrap; }
+
+.course-edit-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.course-details-panel { margin-top: 18px; padding: 20px; border-radius: 10px; background: #f1f8f3; }
+.course-details-panel img { display: block; object-fit: contain; max-width: 100%; margin-bottom: 16px; border-radius: 8px; }
+.course-details-panel dl { display: grid; gap: 14px; }
+.course-details-panel dt { color: #526d5b; font-size: 0.875rem; margin-bottom: 4px; }
+.course-details-panel dd { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.admin-row-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.admin-row-profile { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.admin-row-profile > div { min-width: 0; }
+.admin-row-profile strong { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.admin-row-profile span:not(.badge) { display: block; color: #526d5b; font-size: 0.875rem; margin-top: 5px; overflow-wrap: anywhere; }
+.admin-row-profile img { object-fit: cover; border-radius: 10px; flex-shrink: 0; }
+.admin-row-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
+.admin-row-actions .button { white-space: nowrap; }
+.admin-row-editor { margin-top: 18px; padding: 20px; border-radius: 10px; background: #f1f8f3; }
+@media (max-width: 650px) { .admin-row-heading { flex-wrap: wrap; } }
